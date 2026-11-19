@@ -14,6 +14,8 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{enumitem}
+\usepackage{needspace}
+\usepackage[section]{placeins}
 \usepackage[hidelinks]{hyperref}
 
 % --------------------------------------------------
@@ -40,11 +42,11 @@
 % Document
 % --------------------------------------------------
 \title{
-    \textbf{Proposal: 2.4 GHz Low-Power\\
+    \textbf{Proposal: 900 MHz Low-Power\\
     Gilbert-Cell Downconversion Mixer}
 }
 \author{
-    Sangeon Jeon, Yunho Cho \\
+    Sangeon Jeon, Yunho Cho\\
     Chipalooza Challenge \#4\\
     SkyWater SKY130 CMOS
 }
@@ -59,14 +61,14 @@
 % ==================================================
 
 This project proposes the design and implementation of a
-\textbf{2.4 GHz low-power active downconversion mixer}
+\textbf{900 MHz low-power active downconversion mixer}
 using the open-source SkyWater SKY130 CMOS process.
 
 The proposed IP will use a double-balanced Gilbert-cell
-architecture to translate RF signals in the 2.4 GHz ISM
-band to a low intermediate frequency (IF). It is intended
+architecture to translate RF signals around 900 MHz
+to a low intermediate frequency (IF). It is intended
 as a reusable analog building block for wireless receivers,
-including Wi-Fi, Bluetooth, IoT, and other RF communication
+including IoT and other sub-GHz RF communication
 systems.
 
 The primary objective is to provide a fully open-source,
@@ -119,8 +121,8 @@ The mixer will operate according to
     \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|.
 \end{equation}
 
-For example, an RF input at \(2.450\,\mathrm{GHz}\) and an
-LO input at \(2.449\,\mathrm{GHz}\) will produce a desired
+For example, an RF input at \(900\,\mathrm{MHz}\) and an
+LO input at \(899\,\mathrm{MHz}\) will produce a desired
 IF component at \(1\,\mathrm{MHz}\).
 
 % (?) 너무 낮지 않냐? 보통 ADC sampling rate
@@ -157,7 +159,7 @@ signal pads.
 \texttt{RF\_IN} &
 Input &
 Single-ended RF input, nominally
-\(2.4\)--\(2.5\,\mathrm{GHz}\) \\
+\(900\,\mathrm{MHz}\) \\
 
 \texttt{LO\_IN} &
 Input &
@@ -184,7 +186,7 @@ signals necessary for Gilbert-cell operation.
 
 \textbf{Pad requirements:}
 \texttt{RF\_IN} and \texttt{LO\_IN} require dedicated
-connections suitable for GHz-frequency signaling.
+connections suitable for \(900\,\mathrm{MHz}\) signaling.
 \texttt{IF\_OUT} also requests a dedicated pad to simplify
 independent characterization. The final pad arrangement
 and compatibility with the SKY130 pad library will be
@@ -221,11 +223,11 @@ review of the RF pad interface.
 CMOS process &
 SkyWater SKY130 \\
 
-RF operating band &
-\(2.4\)--\(2.5\,\mathrm{GHz}\) \\
+RF operating region &
+Around \(900\,\mathrm{MHz}\) \\
 
 Nominal RF frequency &
-\(2.45\,\mathrm{GHz}\) \\
+\(900\,\mathrm{MHz}\) \\
 
 IF test frequency &
 \(0.5\)--\(5\,\mathrm{MHz}\) \\
@@ -364,6 +366,7 @@ If the baseline mixer meets its target specifications
 and the design schedule permits, programmable bias
 circuitry will be incorporated.
 
+\begin{samepage}
 This enhancement will allow selection among several
 operating bias points to investigate trade-offs between:
 
@@ -373,6 +376,7 @@ operating bias points to investigate trade-offs between:
     \item Third-order linearity
     \item DC power consumption
 \end{itemize}
+\end{samepage}
 
 The implementation may use a digitally controlled
 current mirror or a switchable bias network.
@@ -422,6 +426,7 @@ KLayout as appropriate.
 
 
 % ==================================================
+\Needspace{18\baselineskip}
 \section{Project Scope and Schedule}
 % ==================================================
 
@@ -468,7 +473,7 @@ included.
 % ==================================================
 
 The project aims to provide an accessible, reusable,
-and silicon-characterized 2.4 GHz analog mixer IP
+and silicon-characterized 900 MHz analog mixer IP
 in SKY130 CMOS.
 
 Although the Gilbert-cell topology is well established,
@@ -483,9 +488,9 @@ power consumption vary with operating conditions,
 helping future designers select appropriate
 configurations for their applications.
 
-\end{document}
-
-
+% --------------------------------------------------
+% Draft planning notes (not part of the typeset proposal)
+% --------------------------------------------------
 % Timeline
 % - Wednesday 11/18 : Draft (Yunho)
 
@@ -506,10 +511,6 @@ configurations for their applications.
 % - Test Plan
 
 % Decisions to make:
-% - Programmability for bias current?   
-
-\section{Introduction}
-
+% - Programmability for bias current?
 
 \end{document}
-

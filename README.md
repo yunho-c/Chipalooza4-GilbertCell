@@ -1,9 +1,10 @@
 # Chipalooza4-GilbertCell
 
-Gilbert-cell mixer project for Chipalooza Challenge #4.
+900 MHz Gilbert-cell mixer project for Chipalooza Challenge #4.
 
 - [`Proposal/`](Proposal/) mirrors the complete source of the [Overleaf project](https://www.overleaf.com/project/6afb93214ffec2507e7e0306), including `main.tex`, `draft-1.md`, and the reference PDF.
 - [`Proposal References/`](Proposal%20References/) contains reference proposals.
+- [`rules-regulations.md`](rules-regulations.md) contains the challenge rules and regulations.
 
 ## Sync with Overleaf
 

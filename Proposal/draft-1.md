@@ -1,12 +1,12 @@
-# Proposal: 2.4 GHz Low-Power Gilbert-Cell Downconversion Mixer
+# Proposal: 900 MHz Low-Power Gilbert-Cell Downconversion Mixer
 
 **Chipalooza Challenge #4 — SkyWater SKY130 CMOS**
 
 ## 1. IP Block Type and Overview
 
-This project proposes the design and implementation of a **2.4 GHz low-power active downconversion mixer** using the open-source SkyWater SKY130 CMOS process.
+This project proposes the design and implementation of a **900 MHz low-power active downconversion mixer** using the open-source SkyWater SKY130 CMOS process.
 
-The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals in the 2.4 GHz ISM band to a low intermediate frequency (IF). It is intended as a reusable analog building block for wireless receivers, including Wi-Fi, Bluetooth, IoT, and other RF communication systems.
+The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals around 900 MHz to a low intermediate frequency (IF). It is intended as a reusable analog building block for wireless receivers, including IoT and other sub-GHz RF communication systems.
 
 The primary objective is to provide a fully open-source, silicon-validated mixer IP with documented conversion gain, noise figure, linearity, port isolation, power consumption, and input impedance characteristics.
 
@@ -28,7 +28,7 @@ The mixer will operate according to
 f_{\mathrm{IF}}=|f_{\mathrm{RF}}-f_{\mathrm{LO}}|.
 \]
 
-For example, an RF input at 2.450 GHz and an LO input at 2.449 GHz will produce a desired IF component at 1 MHz. % (?) 너무 낮지 않냐? 보통 ADC sampling rate
+For example, an RF input at 900 MHz and an LO input at 899 MHz will produce a desired IF component at 1 MHz. % (?) 너무 낮지 않냐? 보통 ADC sampling rate
 
 The design will target low power consumption while maintaining useful conversion gain, noise performance, and linearity.
 
@@ -40,7 +40,7 @@ The baseline design requests three dedicated analog signal pads.
 
 | Signal | Direction | Description |
 |---|---|---|
-| RF_IN | Input | Single-ended RF input, nominally 2.4–2.5 GHz |
+| RF_IN | Input | Single-ended RF input, nominally 900 MHz |
 | LO_IN | Input | Single-ended external LO input |
 | IF_OUT | Output | Buffered, single-ended low-frequency IF output |
 | VDD / GND | Power | Supplied through the Chipalooza harness |
@@ -48,7 +48,7 @@ The baseline design requests three dedicated analog signal pads.
 
 The mixer will internally generate the complementary signals necessary for Gilbert-cell operation.
 
-**Pad requirements:** RF_IN and LO_IN require dedicated connections suitable for GHz-frequency signaling. IF_OUT also requests a dedicated pad to simplify independent characterization. The final pad arrangement and compatibility with the SKY130 pad library will be confirmed during proposal and schematic review.
+**Pad requirements:** RF_IN and LO_IN require dedicated connections suitable for 900 MHz signaling. IF_OUT also requests a dedicated pad to simplify independent characterization. The final pad arrangement and compatibility with the SKY130 pad library will be confirmed during proposal and schematic review.
 
 The baseline circuit will target a nominal 1.8 V core supply, subject to confirmation of harness supply availability, pad voltage limits, and required interface protection.
 
@@ -61,8 +61,8 @@ The following values are initial design targets rather than demonstrated perform
 | Parameter | Preliminary target |
 |---|---|
 | CMOS process | SkyWater SKY130 |
-| RF operating band | 2.4–2.5 GHz |
-| Nominal RF frequency | 2.45 GHz |
+| RF operating region | Around 900 MHz |
+| Nominal RF frequency | 900 MHz |
 | IF test frequency | 0.5–5 MHz |
 | Core supply voltage | 1.8 V nominal |
 | Supply characterization | 1.62–1.98 V, subject to PDK limits |
@@ -163,7 +163,7 @@ The proposed scope is deliberately limited to a single RF downconversion mixer. 
 
 ## 9. Expected Contribution
 
-The project aims to provide an accessible, reusable, and silicon-characterized 2.4 GHz analog mixer IP in SKY130 CMOS.
+The project aims to provide an accessible, reusable, and silicon-characterized 900 MHz analog mixer IP in SKY130 CMOS.
 
 Although the Gilbert-cell topology is well established, an openly documented implementation with reproducible verification and measured RF performance would provide a practical building block for educational, research, and open-source wireless SoC development.
 
