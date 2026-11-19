@@ -39,6 +39,9 @@ case "$action" in
         git subtree pull --prefix=Proposal "$overleaf_url" main --squash
         ;;
     push)
-        git subtree push --prefix=Proposal "$overleaf_url" main
+        split_commit="$(git subtree split --prefix=Proposal)"
+        git push "$overleaf_url" "${split_commit}:main"
+        # Record the pushed subtree as the base for the next Overleaf pull.
+        git subtree merge --prefix=Proposal "$split_commit" --squash
         ;;
 esac
