@@ -14,6 +14,8 @@
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{enumitem}
+\usepackage{needspace}
+\usepackage[section]{placeins}
 \usepackage[hidelinks]{hyperref}
 
 % --------------------------------------------------
@@ -40,12 +42,11 @@
 % Document
 % --------------------------------------------------
 \title{
-    \textbf{Proposal: 2.4 GHz Low-Power\\
-    Gilbert-Cell Downconversion Mixer}
+    \textbf{Chipalooza Challenge \#4 Proposal: 900 MHz Low-Power Gilbert-Cell Downconversion Mixer}
 }
 \author{
-    Sangeon Jeon, Yunho Cho \\
-    Chipalooza Challenge \#4\\
+    Sangeon Jeon, Yunho Cho\\
+    % Chipalooza Challenge \#4\\
     SkyWater SKY130 CMOS
 }
 \date{November 2026}
@@ -55,36 +56,46 @@
 \maketitle
 
 % ==================================================
-\section{IP Block Type and Overview}
+\section{Overview}
 % ==================================================
 
-This project proposes the design and implementation of a
-\textbf{2.4 GHz low-power active downconversion mixer}
-using the open-source SkyWater SKY130 CMOS process.
+% 한 줄에는 한 문장 원칙
+This project proposes the design and implementation of a \textbf{900 MHz low-power active downconversion mixer} using the open-source SkyWater SKY130 CMOS process.
+The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals around 900 MHz to a lower intermediate frequency (IF). 
+It is intended as a reusable building block for wireless receivers, including IoT and other sub-GHz RF communication systems, such as 802.15.4 (Zigbee) and LoRaWAN.
 
-The proposed IP will use a double-balanced Gilbert-cell
-architecture to translate RF signals in the 2.4 GHz ISM
-band to a low intermediate frequency (IF). It is intended
-as a reusable analog building block for wireless receivers,
-including Wi-Fi, Bluetooth, IoT, and other RF communication
-systems.
+% The primary objective is to provide a fully open-source,
+% silicon-validated mixer IP with documented conversion gain,
+% noise figure, linearity, port isolation, power consumption,
+% and input impedance characteristics.
 
-The primary objective is to provide a fully open-source,
-silicon-validated mixer IP with documented conversion gain,
-noise figure, linearity, port isolation, power consumption,
-and input impedance characteristics.
-
-The baseline design will use fixed biasing. If development
-time permits, digitally programmable biasing will be added
+The baseline design will use fixed biasing. 
+% digitally programmable biasing이 매력적인 스펙인지 검토해서 여기에 코멘트로 남겨줘
+% 다른 더 좋은 스펙이 있을 수도 있잖아(e.g. impedance matching, RF/IF signal 대역대 변환)
+If time permits, digitally programmable biasing will be added
 as an optional enhancement to investigate
 power--performance trade-offs.
 
 
 % ==================================================
-\section{Functional Description}
+\section{Description}
 % ==================================================
 
-The proposed mixer will consist of the following
+The mixer will operate according to
+
+\begin{equation}
+    f_{\mathrm{IF}}
+    =
+    \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|.
+\end{equation}
+
+For example, an RF input at \(900\,\mathrm{MHz}\) and an
+LO input at \(899\,\mathrm{MHz}\) will produce a desired
+IF component at \(1\,\mathrm{MHz}\).
+% (?) 너무 낮지 않냐? 보통 ADC sampling rate
+It will consist of the following
+% balun도 다 넣어서 핀 절약할 것. 입력인 RF, LO는 balun을 확실히 넣어야 하는데
+% IF는 그냥 공유핀을 통해서 검증해도 되는지 검토
 subcircuits:
 
 \begin{enumerate}
@@ -99,7 +110,7 @@ subcircuits:
     \item \textbf{LO Input Interface:}
     Accepts an externally generated LO signal and
     provides the complementary signals required by the
-    switching core.
+    switching core. % 실험에서 LO signal을 마음대로 외부 신호로 가정해도 되는지 확인
 
     \item \textbf{IF Load and Output Interface:}
     Converts the downconverted current into an IF voltage
@@ -108,26 +119,12 @@ subcircuits:
 
     \item \textbf{Bias Circuitry:}
     Establishes the operating currents and bias points
-    of the mixer.
+    of the mixer. % 여기에 필요한 것들 나열. pull/push stage 같은 것임? 그냥 직류 bias인데 직류 전압기 연결하면 되지 왜 따로 회로가 필요함?
 \end{enumerate}
 
-The mixer will operate according to
-
-\begin{equation}
-    f_{\mathrm{IF}}
-    =
-    \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|.
-\end{equation}
-
-For example, an RF input at \(2.450\,\mathrm{GHz}\) and an
-LO input at \(2.449\,\mathrm{GHz}\) will produce a desired
-IF component at \(1\,\mathrm{MHz}\).
-
-% (?) 너무 낮지 않냐? 보통 ADC sampling rate
-
-The design will target low power consumption while
-maintaining useful conversion gain, noise performance,
-and linearity.
+% The design will target low power consumption while
+% maintaining useful conversion gain, noise performance,
+% and linearity.
 
 Input impedance matching will be considered for
 compatibility with standard \(50\,\Omega\) RF measurement
@@ -137,11 +134,10 @@ relevant pad parasitics.
 
 
 % ==================================================
-\section{I/O and Interface Requirements}
+\section{Pinout and I/O Requirements}
 % ==================================================
 
-The baseline design requests three dedicated analog
-signal pads.
+We request three dedicated analog signal pads.
 
 \begin{table}[htbp]
 \centering
@@ -157,7 +153,7 @@ signal pads.
 \texttt{RF\_IN} &
 Input &
 Single-ended RF input, nominally
-\(2.4\)--\(2.5\,\mathrm{GHz}\) \\
+\(900\,\mathrm{MHz}\) \\
 
 \texttt{LO\_IN} &
 Input &
@@ -181,10 +177,11 @@ Mixer enable/power-down control, if available \\
 
 The mixer will internally generate the complementary
 signals necessary for Gilbert-cell operation.
+% complementary signals? balun 말하는 거?
 
 \textbf{Pad requirements:}
 \texttt{RF\_IN} and \texttt{LO\_IN} require dedicated
-connections suitable for GHz-frequency signaling.
+connections suitable for \(900\,\mathrm{MHz}\) signaling.
 \texttt{IF\_OUT} also requests a dedicated pad to simplify
 independent characterization. The final pad arrangement
 and compatibility with the SKY130 pad library will be
@@ -194,7 +191,8 @@ The baseline circuit will target a nominal
 \(1.8\,\mathrm{V}\) core supply, subject to confirmation
 of harness supply availability, pad voltage limits,
 and required interface protection.
-
+% 1.8V는 규정에 있는 것임?
+% 전반적으로 이 문서에서 규정에 의거한 것은 의거했다고 주석으로 남겨줘(의거했다면 몇번 룰인지)
 External RF and LO signal generators will be used for
 characterization; an on-chip PLL or LO frequency
 synthesizer is outside the scope of this proposal.
@@ -221,11 +219,11 @@ review of the RF pad interface.
 CMOS process &
 SkyWater SKY130 \\
 
-RF operating band &
-\(2.4\)--\(2.5\,\mathrm{GHz}\) \\
+RF operating region &
+Around \(900\,\mathrm{MHz}\) \\
 
 Nominal RF frequency &
-\(2.45\,\mathrm{GHz}\) \\
+\(900\,\mathrm{MHz}\) \\
 
 IF test frequency &
 \(0.5\)--\(5\,\mathrm{MHz}\) \\
@@ -280,10 +278,6 @@ challenge organizers.
 % ==================================================
 \section{Verification and Measurement Plan}
 % ==================================================
-
-The mixer will undergo pre-layout simulation, physical
-implementation, post-layout verification, and silicon
-characterization.
 
 \subsection{Pre-Layout Verification}
 
@@ -364,6 +358,7 @@ If the baseline mixer meets its target specifications
 and the design schedule permits, programmable bias
 circuitry will be incorporated.
 
+\begin{samepage}
 This enhancement will allow selection among several
 operating bias points to investigate trade-offs between:
 
@@ -373,6 +368,7 @@ operating bias points to investigate trade-offs between:
     \item Third-order linearity
     \item DC power consumption
 \end{itemize}
+\end{samepage}
 
 The implementation may use a digitally controlled
 current mirror or a switchable bias network.
@@ -384,14 +380,12 @@ reusable IP block.
 
 
 % ==================================================
-\section{Open-Source Deliverables}
+\section{Deliverables}
 % ==================================================
 
-The project will be released under the Apache-2.0
-license, subject to compatibility with all incorporated
-source materials.
+The project will be open sourced under the Apache-2.0 license, subject to compatibility with incorporated source materials.
 
-The public repository will include:
+The repository will include:
 
 \begin{itemize}
     \item Transistor-level schematics and simulation
@@ -417,16 +411,17 @@ The public repository will include:
 
 The design will be developed and verified using the
 SKY130 open-source PDK, with reproducible verification
-through tools such as Xschem, ngspice, Magic, and/or
-KLayout as appropriate.
+through tools such as Xschem, ngspice, Magic, and
+KLayout.
 
 
 % ==================================================
-\section{Project Scope and Schedule}
+\Needspace{18\baselineskip}
+\section{Scope and Schedule}
 % ==================================================
 
-The project will prioritize a complete baseline
-Gilbert-cell mixer over optional functionality.
+We will prioritize a complete baseline
+implementation over optional functionality.
 
 \begin{table}[htbp]
 \centering
@@ -457,22 +452,14 @@ Final open-source design submission \\
 \end{tabularx}
 \end{table}
 
-The proposed scope is deliberately limited to a
-single RF downconversion mixer. A complete receiver,
-on-chip PLL, and automatic I/Q calibration are not
-included.
-
-
 % ==================================================
-\section{Expected Contribution}
+\section{Contribution}
 % ==================================================
 
 The project aims to provide an accessible, reusable,
-and silicon-characterized 2.4 GHz analog mixer IP
-in SKY130 CMOS.
-
-Although the Gilbert-cell topology is well established,
-an openly documented implementation with reproducible
+and silicon-characterized 900 MHz analog mixer IP
+in SKY130 CMOS. While the Gilbert-cell topology is well established,
+an open-source implementation with reproducible
 verification and measured RF performance would provide
 a practical building block for educational, research,
 and open-source wireless SoC development.
@@ -483,9 +470,9 @@ power consumption vary with operating conditions,
 helping future designers select appropriate
 configurations for their applications.
 
-\end{document}
-
-
+% --------------------------------------------------
+% Draft planning notes (not part of the typeset proposal)
+% --------------------------------------------------
 % Timeline
 % - Wednesday 11/18 : Draft (Yunho)
 
@@ -506,10 +493,6 @@ configurations for their applications.
 % - Test Plan
 
 % Decisions to make:
-% - Programmability for bias current?   
-
-\section{Introduction}
-
+% - Programmability for bias current?
 
 \end{document}
-
