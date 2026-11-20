@@ -47,6 +47,8 @@
 % 기술 참고: https://www.analog.com/media/en/training-seminars/tutorials/MT-080.pdf
 % 바이어스 참고: https://www.analog.com/en/products/adl5801.html
 % 전류 미러 참고: https://wiki.analog.com/university/courses/electronics/text/chapter-11
+% zero-IF 용어 참고: https://www.analog.com/en/resources/app-notes/an-2550.html
+% 측정 역할 및 지원 계획: https://opencircuitdesign.com/chipalooza/faq.html
 \title{
     \textbf{Chipalooza Challenge \#4 Proposal: 900 MHz Low-Power Gilbert-Cell Downconversion Mixer}
 }
@@ -68,7 +70,7 @@
 % 한 줄에는 한 문장 원칙
 % Rule 1: SKY130 공정 및 DRC/전압 제한 준수. 900 MHz는 규정이 아닌 설계 목표.
 This project proposes the design and implementation of a \textbf{900 MHz low-power active downconversion mixer} using the open-source SkyWater SKY130 CMOS process.
-The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals around 900 MHz to a lower intermediate frequency (IF).
+The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals around 900 MHz to a low, nonzero intermediate frequency (IF).
 It is intended as a reusable building block for wireless receivers, including IoT and other sub-GHz RF communication systems, such as 802.15.4 (Zigbee) and LoRaWAN.
 
 The baseline design will use fixed biasing.
@@ -90,10 +92,10 @@ If time permits, digitally programmable biasing will be added as an optional enh
 \section{Description}
 % ==================================================
 
-The mixer will operate according to $f_{\mathrm{IF}}
-    =
-    \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|$. 
+The mixer will operate according to $f_{\mathrm{IF}}=\left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|$.
 For example, an RF input at \(900\,\mathrm{MHz}\) and an LO input at \(899\,\mathrm{MHz}\) will produce a desired IF component at \(1\,\mathrm{MHz}\).
+The baseline targets low-IF operation over a \(0.5\)--\(5\,\mathrm{MHz}\) characterization range.
+Receiver channel bandwidth, anti-alias filtering, and ADC sampling rate must be selected together for the intended application; the mixer specification does not prescribe an ADC sampling rate.
 
 % \begin{equation}
 %     f_{\mathrm{IF}}
@@ -107,17 +109,13 @@ For example, an RF input at \(900\,\mathrm{MHz}\) and an LO input at \(899\,\mat
 % image 응답을 함께 고려해야 함. 실수 ADC의 일반 Nyquist sampling에서는
 % sampling rate가 IF 중심값이 아니라 입력 신호의 최고 주파수의 2배보다 커야 함.
 % [상언] 맞는데 그래도 2 MHz이면 너무 낮잖아
+% 답변: 2 MS/s는 1 MHz 단일 톤에 대한 이상적 Nyquist 경계일 뿐, 선택한 ADC 사양이 아님.
+% 실측/복조 시에는 신호 상단 주파수, anti-alias filter의 transition band와 oversampling
+% 여유를 반영한 더 높은 sample rate를 쓸 수 있으며, 빠른 ADC가 낮은 IF를 금지하지 않음.
+% 반대로 IF를 수십 MHz로 올리려면 IF load/buffer의 대역폭, 잡음, 전력 목표를 다시 검증해야 함.
+% 따라서 특정 ADC/변조 대역폭이 정해지지 않은 현재는 기존 low-IF 목표를 유지함.
 % 0.5--5 MHz는 우선 단일/두 톤 특성평가 범위이며, 특정 무선 표준의 전체 대역폭 보장을 뜻하지 않음.
 
-% [상언] 아래 내용은 tex에 추가하고 지울 것
-% balun도 다 넣어서 핀 절약할 것. 입력인 RF, LO는 balun을 확실히 넣어야 하는데
-% IF는 그냥 공유핀을 통해서 검증해도 되는지 검토
-% 검토: RF/LO는 각각 on-chip balun으로 차동화하여 외부 신호 패드는 한 개씩 사용.
-% IF는 Rule 22의 공유 아날로그 버스 사용 후보이나 0.5--5 MHz 통과가 보장된 것은 아님.
-% switch Ron뿐 아니라 bus/pad/package capacitance 및 출력 임피던스가 bandwidth,
-% gain 오차와 distortion에 영향을 주므로 버퍼를 포함한 추출 회로로 검증해야 함.
-% baseline은 현재의 전용 IF_OUT을 유지. 공유 IF는 검증 후 전환할 수 있는 후보이며,
-% 공유 출력과 전용 출력을 모두 연결하는 추가 경로는 아직 baseline에 포함하지 않음.
 It will consist of the following subcircuits:
 
 \begin{enumerate}
@@ -140,6 +138,12 @@ It will consist of the following subcircuits:
     % 주파수/입력 전력/임피던스/위상잡음 조건을 명시하고 Rule 1/10의 전압 제한을 지켜야 함.
     % 이는 실제 보드에서의 발진기 설계나 사용 가능한 측정 장비가 이미 확보되었다는 뜻은 아님.
     % [상언] 이거 그럼 누가 검증을 하는 것임? 공용 패드 어쩌고 하는 걸로 봐서는 주최 측에서 검증하겠다고 하는 것 아님?
+    % 답변: 참가 팀이 설계 검증/실측 계획과 결과를 책임지며, 장비를 가진 다른 팀과 협력 가능.
+    % Rule 6.5/6.6은 측정 계획/장비 목록, Rule 16/19는 sign-off/PVT 결과,
+    % Rule 20은 참가자의 wrapper 배선, Rule 26은 실측/특성평가/결과 공개를 요구함.
+    % harness는 전원/제어/패드 접근을 제공하며 RF/LO 발생이나 NF/IIP3 측정 대행을 뜻하지 않음.
+    % FAQ에는 칩 실장 보드와 test board를 설계자에게 보내고 타 팀의 측정 협력을 기대하는
+    % 계획이 있으나, Challenge #4의 지급 수량/확정 지원 범위를 보장하는 문구는 아님.
 
     \item \textbf{IF Load and Output Interface:}
     Converts the downconverted current into an IF voltage suitable for measurement or connection to a subsequent analog stage.
@@ -152,6 +156,9 @@ It will consist of the following subcircuits:
     % 검토: bias circuitry는 DC 동작점 설정/분배 회로이며 push-pull 출력단 자체를 뜻하지 않음.
     % 외부 DC 전압으로 초기 시험은 가능하지만 VGS 고정만으로는 PVT에 따른 ID/gm 변화가 억제되지 않음.
     % [상언] 그럼 current mirror를 통해서 동작점을 설정하는 회로가 필요한 것이네?
+    % 답변: 맞음. reference current를 mirror 비율로 복사/스케일하여 tail current와
+    % balun/buffer bias를 분배하고, 필요한 DC gate/common-mode 전압을 local network로 생성함.
+    % mirror 자체가 정확한 절대 전류 기준을 만드는 것은 아니므로 IREF 및 compliance/headroom 확인 필요.
     % Rule 7.2/7.3의 기준 전압 및 최대 두 기준 전류를 받아 내부 current mirror로 필요한
     % 여러 분기 전류를 만들면 각 bias node에 별도 핀을 쓰지 않고 동작점을 설정할 수 있음.
     % 기준 전류가 있다고 PVT 무관한 gm/NF/linearity까지 보장되는 것은 아니므로 별도 검증 필요.
@@ -212,11 +219,15 @@ Harness bias references; final allocation to be confirmed \\
 \end{table}
 
 The on-chip RF and LO baluns will generate the differential signals required by the Gilbert-cell core.
+Each external RF and LO input therefore requires one signal pad, while the internal mixer core is driven differentially.
 
 \textbf{Pad requirements:}
 % Rule 21: slot별 전용 패드 및 pad library 선택. Rule 22: 고주파용 공유 버스 사용에 주의.
 \texttt{RF\_IN} and \texttt{LO\_IN} require dedicated connections suitable for \(900\,\mathrm{MHz}\) signaling.
 \texttt{IF\_OUT} also requests a dedicated pad to simplify independent characterization.
+The shared analog bus is a possible alternative for the buffered IF output, subject to verification of its bandwidth, gain error, and distortion over the target IF range.
+This verification must include switch resistance, bus and pad capacitance, package parasitics, and output-buffer impedance.
+The baseline retains the dedicated IF pad until the shared path is demonstrated to meet the measurement requirements.
 The final pad arrangement and compatibility with the SKY130 pad library will be confirmed during proposal and schematic review.
 
 The baseline circuit will target a nominal \(1.8\,\mathrm{V}\) core supply, with input and output protection compatible with the harness pad interface.
@@ -244,7 +255,14 @@ The following values are initial design targets rather than demonstrated perform
 Final feasibility will be assessed through SKY130 transistor-level simulations and review of the RF pad interface.
 
 % gilbert cell은 conversion gain이 1을 넘을 수 있는 mixer임?
+% 답변: 가능함. active Gilbert mixer는 DC 공급 에너지를 사용하며 gm과 IF 부하에 따라
+% 전압 conversion gain이 1보다 커질 수 있음. 실제 이득에는 balun/interface의 손실 및 부하가 포함됨.
+% 아래 표는 전압 이득 기준: +5 dB는 RMS 전압비 약 1.78, 0 dB는 전압비 1.
+% 전력 conversion gain과 동일시하지 않도록 RF/IF 전압 측정 기준과 부하를 본문에 명시함.
 % 0.5-5MHz이면 사실상 homodyne 아님? 그냥 homodyne이라고 말하는 것이 언급하는게 좋지 않을까?
+% 답변: 0.5--5 MHz처럼 IF 중심이 0이 아닌 현재 목표는 low-IF downconversion으로 표기함.
+% homodyne/direct-conversion/zero-IF는 RF carrier와 LO를 일치시켜 DC 중심 baseband로 내리는 경우.
+% 현재 목표에는 DC 응답/offset 보정이나 I/Q image rejection이 포함되지 않으므로 homodyne 보장은 하지 않음.
 \begin{table}[htbp]
 \centering
 \caption{Preliminary mixer specifications}
@@ -273,7 +291,7 @@ Supply characterization &
 \(1.62\)--\(1.98\,\mathrm{V}\),
 subject to PDK limits \\
 
-Conversion gain &
+Voltage conversion gain &
 \(\geq 5\,\mathrm{dB}\) nominal;
 \(\geq 0\,\mathrm{dB}\) minimum target \\
 
@@ -300,6 +318,8 @@ High-impedance measurement input \\
 \end{tabularx}
 \end{table}
 
+Voltage conversion gain is defined using the single-ended IF RMS voltage relative to the single-ended RF-pad RMS voltage, with the specified input match and high-impedance IF load.
+The gain includes the on-chip baluns, mixer core, and output interface.
 Specifications will be evaluated under clearly defined RF input power, LO drive, load impedance, supply voltage, and temperature conditions.
 Transistor operating voltages and RF input levels will remain within the applicable PDK and pad absolute limits.
 
@@ -311,6 +331,10 @@ The acceptance limits and simulation methods will be finalized during schematic 
 \section{Verification and Measurement Plan}
 % ==================================================
 % [상언] https://wiki.hivemakerspace.com/explore/electronics-benchtop/에서 보고 장비 사용 가능한 거 다 써줘
+% 반영: 위 공개 목록의 장비 21종을 별도 첨부 test-equipment.tex에 모두 기재하고 용도를 정리함.
+% Rule 6.6에 따라 장비 목록은 제안서 본문에 합치지 않음. 실제 옵션/예약/교정 상태/동시 사용은 별도 확인.
+% 특히 E5063A의 900 MHz 옵션, 독립 RF/LO 및 two-tone source, RF sensor/교정 kit,
+% noise source 또는 동등한 calibrated NF 방법의 확보는 공개 목록만으로 확정할 수 없음.
 % Rule 6.5: 실측 검증 계획. 장비 목록과 CV는 Rule 6.6/6.7에 따라 별도 제출.
 % Rule 13: open-source EDA로 성능 검증 가능해야 함. Rule 16: 재현 가능한 plot/summary와 sign-off 결과.
 \subsection{Pre-Layout Verification}
@@ -359,14 +383,18 @@ Verification will include:
 
 \subsection{Silicon Characterization}
 
+The design team will carry out silicon characterization, with collaborative measurements where equipment access requires them.
+The harness provides power, control, and signal access to the IP block; characterization uses external stimulus and measurement equipment.
+The separate equipment attachment identifies the available facility inventory, proposed uses, and capabilities that still require confirmation.
 Following fabrication, RF and LO signals will be applied through the dedicated test pads.
 
-The IF output will be measured using appropriate test equipment to characterize conversion gain, operating frequency range, and linearity.
+The IF output will be measured using an oscilloscope and signal analyzer, as appropriate, to characterize conversion gain, operating frequency range, and linearity.
+Any connection to a \(50\,\Omega\) analyzer input will use a characterized buffer or loading correction consistent with the high-impedance IF specification.
 
 A two-tone RF measurement will be used to determine third-order intermodulation performance.
 Input matching and LO leakage will be characterized using RF measurement equipment where available.
 
-Noise figure will be characterized using a calibrated noise measurement method, with test-fixture and interface losses accounted for.
+Noise figure will be characterized using a calibrated noise source or an equivalent calibrated method, with receiver noise, image-band response, and test-fixture and interface losses accounted for.
 
 Measurements will be compared with pre-layout and post-layout simulation results, and any discrepancies will be documented.
 

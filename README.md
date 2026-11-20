@@ -3,6 +3,7 @@
 900 MHz Gilbert-cell mixer project for Chipalooza Challenge #4.
 
 - [`Proposal/`](Proposal/) mirrors the complete source of the [Overleaf project](https://www.overleaf.com/project/6afb93214ffec2507e7e0306). Its main LaTeX document is [`proposal.tex`](Proposal/proposal.tex); it also contains `draft-1.md`, instructions, links, and the reference PDF.
+- [`test-equipment.tex`](Proposal/test-equipment.tex) is the separate testing-equipment attachment, with the Hive inventory and measurement requirements.
 - [`Proposal References/`](Proposal%20References/) contains reference proposals.
 - [`rules-regulations.md`](rules-regulations.md) contains the challenge rules and regulations.
 
