@@ -51,7 +51,8 @@
     \textbf{Chipalooza Challenge \#4 Proposal: 900 MHz Low-Power Gilbert-Cell Downconversion Mixer}
 }
 \author{
-    % Rule 6: 개인/기관 정보는 본문에서 제외하고 CV는 별도 제출(Rule 6.7).
+    Sangeon Jeon, Yunho Cho \\% DO NOT DELETE
+    % Rule 6: 추가 개인/기관 정보는 본문에서 제외하고 CV는 별도 제출(Rule 6.7).
     SkyWater SKY130 CMOS
 }
 \date{November 2026}
@@ -89,21 +90,26 @@ If time permits, digitally programmable biasing will be added as an optional enh
 \section{Description}
 % ==================================================
 
-The mixer will operate according to
-
-\begin{equation}
-    f_{\mathrm{IF}}
+The mixer will operate according to $f_{\mathrm{IF}}
     =
-    \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|.
-\end{equation}
-
+    \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|$. 
 For example, an RF input at \(900\,\mathrm{MHz}\) and an LO input at \(899\,\mathrm{MHz}\) will produce a desired IF component at \(1\,\mathrm{MHz}\).
+
+% \begin{equation}
+%     f_{\mathrm{IF}}
+%     =
+%     \left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|.
+% \end{equation}
+
 % (?) 너무 낮지 않냐? 보통 ADC sampling rate
 % 검토: 1 MHz는 ADC sampling rate가 아닌 IF 중심 주파수의 예시임.
 % 낮은 IF는 후단의 속도 부담을 줄일 수 있으나, 신호 대역폭과 flicker noise 및
 % image 응답을 함께 고려해야 함. 실수 ADC의 일반 Nyquist sampling에서는
 % sampling rate가 IF 중심값이 아니라 입력 신호의 최고 주파수의 2배보다 커야 함.
+% [상언] 맞는데 그래도 2 MHz이면 너무 낮잖아
 % 0.5--5 MHz는 우선 단일/두 톤 특성평가 범위이며, 특정 무선 표준의 전체 대역폭 보장을 뜻하지 않음.
+
+% [상언] 아래 내용은 tex에 추가하고 지울 것
 % balun도 다 넣어서 핀 절약할 것. 입력인 RF, LO는 balun을 확실히 넣어야 하는데
 % IF는 그냥 공유핀을 통해서 검증해도 되는지 검토
 % 검토: RF/LO는 각각 on-chip balun으로 차동화하여 외부 신호 패드는 한 개씩 사용.
@@ -133,6 +139,7 @@ It will consist of the following subcircuits:
     % 따라서 외부 signal generator를 LO source로 쓰는 측정 계획은 가능하나,
     % 주파수/입력 전력/임피던스/위상잡음 조건을 명시하고 Rule 1/10의 전압 제한을 지켜야 함.
     % 이는 실제 보드에서의 발진기 설계나 사용 가능한 측정 장비가 이미 확보되었다는 뜻은 아님.
+    % [상언] 이거 그럼 누가 검증을 하는 것임? 공용 패드 어쩌고 하는 걸로 봐서는 주최 측에서 검증하겠다고 하는 것 아님?
 
     \item \textbf{IF Load and Output Interface:}
     Converts the downconverted current into an IF voltage suitable for measurement or connection to a subsequent analog stage.
@@ -144,14 +151,11 @@ It will consist of the following subcircuits:
     % 여기에 필요한 것들 나열. pull/push stage 같은 것임? 그냥 직류 bias인데 직류 전압기 연결하면 되지 왜 따로 회로가 필요함?
     % 검토: bias circuitry는 DC 동작점 설정/분배 회로이며 push-pull 출력단 자체를 뜻하지 않음.
     % 외부 DC 전압으로 초기 시험은 가능하지만 VGS 고정만으로는 PVT에 따른 ID/gm 변화가 억제되지 않음.
+    % [상언] 그럼 current mirror를 통해서 동작점을 설정하는 회로가 필요한 것이네?
     % Rule 7.2/7.3의 기준 전압 및 최대 두 기준 전류를 받아 내부 current mirror로 필요한
     % 여러 분기 전류를 만들면 각 bias node에 별도 핀을 쓰지 않고 동작점을 설정할 수 있음.
     % 기준 전류가 있다고 PVT 무관한 gm/NF/linearity까지 보장되는 것은 아니므로 별도 검증 필요.
 \end{enumerate}
-
-% The design will target low power consumption while
-% maintaining useful conversion gain, noise performance,
-% and linearity.
 
 Input impedance matching will be considered for compatibility with standard \(50\,\Omega\) RF measurement equipment.
 The matching network will be designed and characterized together with the input circuitry and relevant pad parasitics.
@@ -208,9 +212,6 @@ Harness bias references; final allocation to be confirmed \\
 \end{table}
 
 The on-chip RF and LO baluns will generate the differential signals required by the Gilbert-cell core.
-% complementary signals? balun 말하는 거?
-% 답변: 여기서 complementary는 digital NOT 신호가 아니라 두 balun의 반대 위상 아날로그 출력.
-% 입력의 single-ended/differential 변환은 balun 역할, double-balanced mixing은 Gilbert core 역할임.
 
 \textbf{Pad requirements:}
 % Rule 21: slot별 전용 패드 및 pad library 선택. Rule 22: 고주파용 공유 버스 사용에 주의.
@@ -242,6 +243,8 @@ External RF and LO signal generators will be used for characterization; an on-ch
 The following values are initial design targets rather than demonstrated performance.
 Final feasibility will be assessed through SKY130 transistor-level simulations and review of the RF pad interface.
 
+% gilbert cell은 conversion gain이 1을 넘을 수 있는 mixer임?
+% 0.5-5MHz이면 사실상 homodyne 아님? 그냥 homodyne이라고 말하는 것이 언급하는게 좋지 않을까?
 \begin{table}[htbp]
 \centering
 \caption{Preliminary mixer specifications}
@@ -307,7 +310,7 @@ The acceptance limits and simulation methods will be finalized during schematic 
 % ==================================================
 \section{Verification and Measurement Plan}
 % ==================================================
-
+% [상언] https://wiki.hivemakerspace.com/explore/electronics-benchtop/에서 보고 장비 사용 가능한 거 다 써줘
 % Rule 6.5: 실측 검증 계획. 장비 목록과 CV는 Rule 6.6/6.7에 따라 별도 제출.
 % Rule 13: open-source EDA로 성능 검증 가능해야 함. Rule 16: 재현 가능한 plot/summary와 sign-off 결과.
 \subsection{Pre-Layout Verification}
@@ -372,8 +375,6 @@ Measurements will be compared with pre-layout and post-layout simulation results
 \section{Optional Enhancement: Programmable Bias}
 % ==================================================
 
-% 검토 결론: 가변 bias는 필수 baseline 항목보다 우선하지 않으며,
-% 구현한다면 소수의 검증된 전류 설정으로 power/performance trade-off를 보여주는 정도로 제한.
 % Rule 7.4: 최대 24 digital control inputs 중 일부를 사용할 수 있음(실제 할당은 확인).
 If the baseline mixer meets its target specifications and the design schedule permits, programmable bias circuitry will be incorporated.
 
