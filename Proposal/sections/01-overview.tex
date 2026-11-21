@@ -1,0 +1,13 @@
+% !TeX root = ../proposal.tex
+% Rule 1: Meet SKY130 process, DRC, and voltage requirements.
+% Rule 9: The numerical performance targets are design choices, not prescribed values.
+% Changes to agreed target specifications require organizer approval.
+
+\section{Overview}
+
+This project proposes the design and implementation of a \textbf{900 MHz low-power active downconversion mixer} using the open-source SkyWater SKY130 CMOS process.
+The proposed IP will use a double-balanced Gilbert-cell architecture to translate RF signals around 900 MHz to a nonzero intermediate frequency (IF), nominally \(10\,\mathrm{MHz}\).
+It is intended as a reusable building block for wireless receivers, including IoT and other sub-GHz RF communication systems, such as 802.15.4 (Zigbee) and LoRaWAN.
+
+The baseline design will use fixed biasing.
+If time permits, digitally programmable biasing will be added as an optional enhancement to investigate power--performance trade-offs.

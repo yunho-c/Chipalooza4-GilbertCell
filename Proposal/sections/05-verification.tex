@@ -1,0 +1,107 @@
+% !TeX root = ../proposal.tex
+% Rule 6.5: The measurement/test plan belongs in this proposal.
+% Rule 6.6: The equipment list is submitted separately; test-equipment.md is an internal planning note.
+% Public resource pages were reviewed on 2026-11-21, including the GT campus makerspace directory.
+% The Hive: https://wiki.hivemakerspace.com/explore/electronics-benchtop/
+% Invention Studio: https://inventionstudio.gatech.edu/tools-equipment/electronics/
+% MILL: https://mill.mse.gatech.edu/equipment/measurement-team/
+% Do not equate a public instrument listing with a booked or fully configured test setup.
+% Independent RF/LO sources, two-tone stimulus, 900 MHz VNA coverage, and calibrated NF access remain open.
+% The MILL lists a FLIR ETS320 for thermal imaging; this does not establish a controlled electrical temperature-sweep setup.
+% Rules 13/16 require reproducible open-source verification and sign-off summaries.
+% Rule 19 requires post-layout commercial PVT verification; a maximum temperature of 110 degC is acceptable.
+% The exact temperature endpoints and process corners must be agreed during schematic review.
+% Full PVT simulation remains required even while measured temperature-sweep access is unresolved.
+
+\section{Verification and Measurement Plan}
+\subsection{Pre-Layout Verification}
+
+\begin{itemize}
+    \item Verify DC operating points and device operating regions.
+
+    \item Evaluate conversion gain across RF frequency, LO drive, and bias conditions.
+
+    \item Verify the on-chip RF and LO balun amplitude and phase balance across operating conditions.
+    Include their noise and distortion contributions and all interface and bias circuitry in the measured gain, noise figure, and total DC power.
+
+    \item Characterize RF input impedance and \(S_{11}\).
+
+    \item Evaluate linearity using two-tone RF tests and estimate IIP3.
+
+    \item Evaluate LO-to-RF feedthrough and port isolation.
+
+    \item Analyze noise performance and power consumption.
+
+    \item Evaluate flicker-noise contribution and conversion gain across the \(5\)--\(20\,\mathrm{MHz}\) IF range under periodic LO drive.
+    Verify the shared IF path using the output-buffer impedance and available harness parasitic models, with sensitivity sweeps where extraction data are incomplete.
+
+    \item Perform process, voltage, temperature, and mismatch sensitivity analyses.
+\end{itemize}
+
+
+\subsection{Physical Design and Post-Layout Verification}
+
+The mixer will be laid out using the SKY130 PDK, with attention to differential symmetry, device matching, parasitic coupling, and RF signal routing.
+
+Verification will include:
+
+\begin{itemize}
+    \item Design Rule Check (DRC)
+
+    \item Layout Versus Schematic (LVS)
+
+    \item Parasitic extraction (PEX)
+
+    \item Post-layout conversion gain, linearity, isolation, and power simulations
+
+    \item PVT verification using reproducible open-source workflows, including temperature-corner simulations across the agreed commercial range
+\end{itemize}
+
+
+\subsection{Silicon Characterization}
+
+The design team will carry out silicon characterization, with collaborative measurements where equipment access requires them.
+The harness provides power, control, and signal access to the IP block; characterization uses external stimulus and measurement equipment.
+Following fabrication, RF and LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
+Public Georgia Tech makerspace inventories support the following plan, but do not establish reservations, installed options, calibration, or a complete test setup.
+
+\begin{enumerate}
+    \item \textbf{Initial DC and IF checks.}
+    Start at a recorded ambient temperature with current-limited supplies and confirm supply rails, enable control, bias, and startup before applying RF stimulus.
+    The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keithley 2450 SMU},
+    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{DMM6500}, and
+    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Tektronix MSO58};
+    Invention Studio lists a \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{500 MHz Keysight oscilloscope} and
+    \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{Fluke 179 multimeters}.
+    Use high-impedance probes for the buffered IF output.
+    Isolating the mixer supply current from other harness loads requires confirmation of the final board connections.
+
+    \item \textbf{Conversion gain and shared IF path.}
+    With independently adjustable RF and LO sources near \(900\,\mathrm{MHz}\), sweep RF input level, LO drive, bias, and IF frequency over \(5\)--\(20\,\mathrm{MHz}\).
+    Measure RF-pad and IF-pad RMS voltages for conversion gain, and compare the shared-path response with extracted simulations, including loading and fixture corrections.
+    The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight vector signal generator} and
+    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}, but the generator model and simultaneous independent RF/LO source availability remain unconfirmed.
+    This stimulus configuration therefore needs further consideration before these measurements can be committed to.
+    A \(50\,\Omega\) analyzer connection requires a characterized interface consistent with the high-impedance IF specification.
+
+    \item \textbf{RF matching and LO leakage.}
+    The Hive's \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight E5063A VNA} is a candidate for RF \(S_{11}\), but its installed frequency option and calibration kit require confirmation:
+    \href{https://helpfiles.keysight.com/csg/e5063a/product_information/options.htm}{option 205 stops at 500 MHz; option 215 or higher covers 900 MHz}.
+    Use the N9000B for LO leakage at the RF port once source levels, port loading, and fixture losses are calibrated.
+    These setups need further consideration; the public inventory alone does not establish readiness.
+
+    \item \textbf{IIP3 and noise figure: further consideration required.}
+    Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity.
+    Calibrated SSB noise-figure testing requires a noise source or equivalent calibrated method, a suitable IF receiver, and corrections for receiver noise, image-band response, and fixture losses.
+    The reviewed makerspace inventories do not establish either complete setup.
+    Equipment access and a validated method must be resolved, potentially through collaboration, before promising these silicon measurements; simulation results will be identified separately.
+
+    \item \textbf{Temperature characterization: further consideration required.}
+    The MILL lists a \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{FLIR ETS320 infrared camera} for surface thermal imaging, which may support diagnostics but does not establish controlled powered-DUT temperature sweeps or junction-temperature measurement.
+    A calibrated chamber or thermal stage, monitoring method, and compatible electrical connections have not been confirmed in the reviewed inventories.
+    Initial measurements will therefore be at recorded ambient conditions; a temperature-sweep method and access need further consideration.
+    Required post-layout PVT simulations across the agreed commercial range will still be performed.
+\end{enumerate}
+
+For each completed measurement, record stimulus, load, calibration, supply, and temperature conditions, compare with pre-layout and post-layout results, and document discrepancies.
+Unresolved equipment requirements and unmeasured specifications will be reported explicitly.

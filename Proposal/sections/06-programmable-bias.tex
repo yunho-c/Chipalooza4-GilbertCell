@@ -1,0 +1,22 @@
+% !TeX root = ../proposal.tex
+% Rule 7.4: Bias-selection bits may use allocated digital control inputs.
+% Programmable bias is optional; characterize gain, NF, linearity, and power at each implemented setting.
+
+\section{Optional Enhancement: Programmable Bias}
+
+If the baseline mixer meets its target specifications and the design schedule permits, programmable bias circuitry will be incorporated.
+
+\begin{samepage}
+This enhancement will allow selection among several operating bias points to investigate trade-offs between:
+
+\begin{itemize}
+    \item Conversion gain
+    \item Noise figure
+    \item Third-order linearity
+    \item DC power consumption
+\end{itemize}
+\end{samepage}
+
+The implementation may use a digitally controlled current mirror or a switchable bias network.
+
+\textbf{Programmable bias is not required for successful operation or verification of the baseline mixer.} The fixed-bias mixer will remain a standalone, reusable IP block.

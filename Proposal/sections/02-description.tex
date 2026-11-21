@@ -1,0 +1,50 @@
+% !TeX root = ../proposal.tex
+% The baseline is a nonzero-IF mixer: nominal IF 10 MHz, characterized at 5--20 MHz.
+% Raising IF does not by itself prove flicker-noise compliance; simulate noise under LO drive.
+% The IF characterization range is not an occupied-channel bandwidth or an ADC sample rate.
+% Rules 6.5/6.6 require a measurement plan and equipment list; they do not require an on-chip LO.
+% External RF/LO source frequency, power, impedance, and noise must be defined and respect Rules 1/10.
+% The participant team performs verification; the harness provides supply, control, and signal access.
+% Rules 6, 16, 19, 20, and 26 govern measurement planning, sign-off, integration, and published results.
+% Rules 7.2/7.3 provide bias-reference resources; local mirrors scale/distribute reference currents.
+% A mirror does not generate an absolute current reference or remove PVT dependence.
+
+\section{Description}
+
+The mixer will operate according to $f_{\mathrm{IF}}=\left|f_{\mathrm{RF}}-f_{\mathrm{LO}}\right|$.
+For example, an RF input at \(900\,\mathrm{MHz}\) and an LO input at \(890\,\mathrm{MHz}\) will produce a desired IF component at \(10\,\mathrm{MHz}\).
+The baseline targets a nominal IF of \(10\,\mathrm{MHz}\), with characterization over \(5\)--\(20\,\mathrm{MHz}\).
+This choice provides greater separation from DC; flicker-noise contribution and the gain, noise, and linearity of the IF load and buffer will be evaluated across the target range.
+Receiver channel bandwidth, anti-alias filtering, and ADC sampling rate must be selected together for the intended application; the mixer specification does not prescribe an ADC sampling rate.
+
+
+It will consist of the following subcircuits:
+
+\begin{enumerate}
+    \item \textbf{RF Input Balun and Matching Interface:}
+    Converts the single-ended RF input into a differential signal on chip and provides the input matching interface.
+    Its noise, loss, and amplitude and phase balance will be included in the mixer characterization.
+
+    \item \textbf{RF Transconductance Stage:}
+    Converts the incoming RF voltage into a differential current for frequency conversion.
+
+    \item \textbf{Gilbert-Cell Switching Core:}
+    Performs frequency translation using a differential LO switching quad.
+
+    \item \textbf{LO Input Balun and Buffer:}
+    Accepts a single-ended, externally generated LO signal and generates the differential LO drive on chip using a balun and buffer.
+    The required input drive, internal voltage swing, and amplitude and phase balance will be characterized.
+
+
+    \item \textbf{IF Load and Output Interface:}
+    Converts the downconverted current into an IF voltage and buffers the output for the shared analog bus over the target \(5\)--\(20\,\mathrm{MHz}\) IF range.
+    The output stage will be designed and characterized with the harness switch, interconnect, pad, package, and measurement load included.
+
+    \item \textbf{Bias Circuitry:}
+    Derives local bias currents and voltages from the harness reference resources using current mirrors and local bias networks.
+    It sets the mixer tail current, the RF and LO input common-mode levels, and the output-buffer operating point.
+    Supply decoupling and bias filtering will be included, with startup circuitry provided if required by the selected bias topology.
+\end{enumerate}
+
+Input impedance matching will be considered for compatibility with standard \(50\,\Omega\) RF measurement equipment.
+The matching network will be designed and characterized together with the input circuitry and relevant pad parasitics.
