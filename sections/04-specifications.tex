@@ -1,0 +1,84 @@
+% !TeX root = ../proposal.tex
+% Rules 6.4/9: Define appropriate typical/min/max values and absolute limits.
+% These are preliminary design targets, not measured results or mandatory challenge values.
+% The 1.62--1.98 V range is our +/-10 percent supply sweep, subject to PDK limits.
+% Final LO drive, RF input limits, pad/device ratings, and measurement loading remain to be set.
+% Active Gilbert mixers can have voltage conversion gain above unity using supply power.
+% The +5 dB voltage-gain target is an RMS voltage ratio of approximately 1.78, not a power-gain claim.
+% Nonzero IF operation is not a commitment to zero-IF response, offset correction, or I/Q image rejection.
+% Organizer reply summary (2026-11-19): Analog switch on-resistance is below 5 ohms,
+% and the expected pad/package parasitics should permit shared-line operation near 10 MHz.
+% Total parasitics had not been extracted; the reply is not a measured guarantee up to 20 MHz.
+% Validate the full driver, shared bus, pad, package, and load over the requested 5--20 MHz range.
+
+\Needspace{24\baselineskip}
+\section{Preliminary Target Specifications}
+
+The following values are initial design targets rather than demonstrated performance.
+Final feasibility will be assessed through SKY130 transistor-level simulations and review of the RF pad interface.
+
+\begin{table}[htbp]
+\centering
+\caption{Preliminary mixer specifications}
+\label{tab:specifications}
+\begin{tabularx}{\textwidth}{@{}p{0.46\textwidth}Y@{}}
+\toprule
+\textbf{Parameter} & \textbf{Preliminary target} \\
+\midrule
+
+CMOS process &
+SkyWater SKY130 \\
+
+RF operating region &
+Around \(900\,\mathrm{MHz}\) \\
+
+Nominal RF frequency &
+\(900\,\mathrm{MHz}\) \\
+
+Nominal IF frequency &
+\(10\,\mathrm{MHz}\) \\
+
+IF characterization range &
+\(5\)--\(20\,\mathrm{MHz}\) \\
+
+Core supply voltage &
+\(1.8\,\mathrm{V}\) nominal \\
+
+Supply characterization &
+\(1.62\)--\(1.98\,\mathrm{V}\),
+subject to PDK limits \\
+
+Voltage conversion gain &
+\(\geq 5\,\mathrm{dB}\) nominal;
+\(\geq 0\,\mathrm{dB}\) minimum target \\
+
+Single-sideband noise figure &
+\(\leq 15\,\mathrm{dB}\) nominal target \\
+
+Input return loss (\(S_{11}\)) &
+\(\leq -10\,\mathrm{dB}\)
+at nominal RF frequency \\
+
+Input third-order intercept (\(\mathrm{IIP3}\)) &
+\(\geq -15\,\mathrm{dBm}\) nominal target \\
+
+LO-to-RF isolation &
+\(\geq 20\,\mathrm{dB}\) \\
+
+DC power consumption &
+\(\leq 20\,\mathrm{mW}\) nominal \\
+
+Load for baseline IF testing &
+High-impedance measurement input \\
+
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Voltage conversion gain is defined using the single-ended IF RMS voltage at the selected shared measurement pad relative to the single-ended RF-pad RMS voltage, with the specified input match and high-impedance IF load.
+The gain includes the on-chip baluns, mixer core, output interface, and selected shared output path; external test-fixture losses will be documented separately.
+Specifications will be evaluated under clearly defined RF input power, LO drive, load impedance, supply voltage, and temperature conditions.
+Transistor operating voltages and RF input levels will remain within the applicable PDK and pad absolute limits.
+
+The design will be characterized across process, voltage, and temperature corners, including post-layout extracted parasitics.
+The acceptance limits and simulation methods will be finalized during schematic review with the challenge organizers.
