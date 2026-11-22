@@ -1,13 +1,6 @@
 % !TeX root = ../proposal.tex
 % Rule 6.5: The measurement/test plan belongs in this proposal.
-% Rule 6.6: The equipment list is submitted separately; test-equipment.md is an internal planning note.
-% Public resource pages were reviewed on 2026-11-21, including the GT campus makerspace directory.
-% The Hive: https://wiki.hivemakerspace.com/explore/electronics-benchtop/
-% Invention Studio: https://inventionstudio.gatech.edu/tools-equipment/electronics/
-% MILL: https://mill.mse.gatech.edu/equipment/measurement-team/
-% Do not equate a public instrument listing with a booked or fully configured test setup.
-% Independent RF/LO sources, two-tone stimulus, 900 MHz VNA coverage, and calibrated NF access remain open.
-% The MILL lists a FLIR ETS320 for thermal imaging; this does not establish a controlled electrical temperature-sweep setup.
+% Rule 6.6: Submit equipment-list.tex as a separate attachment.
 % Rules 13/16 require reproducible open-source verification and sign-off summaries.
 % Rule 19 requires post-layout commercial PVT verification; a maximum temperature of 110 degC is acceptable.
 % The exact temperature endpoints and process corners must be agreed during schematic review.
@@ -16,7 +9,6 @@
 % ngspice analyses and limitations: https://ngspice.sourceforge.io/docs.html
 % Magic: https://opencircuitdesign.com/magic/
 % Netgen: https://opencircuitdesign.com/netgen/
-% A listed vector signal generator is a candidate, not proof that 900 MHz generation is unavailable.
 
 \section{Verification and Measurement Plan}
 \subsection{Pre-Layout Verification}
@@ -76,51 +68,31 @@ Verification will include:
 
 \subsection{Silicon Characterization}
 
-We will carry out silicon characterization, with collaborative measurements in makerspaces and laboratories at Georgia Tech (e.g., The Hive) where equipment access requires them.
-The harness provides power, control, and signal access to the IP block.
-% Characterization uses external stimulus and measurement equipment.
-Following fabrication, differential RF and single-ended LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
-Instrument names below are hyperlinks to the facilities' equipment listings.
-\unconfirmed{Red text identifies equipment, options, or complete measurement configurations whose availability is unconfirmed.}
+The harness supplies power and control. Apply differential RF and single-ended LO signals through the dedicated pads and measure the buffered IF output on the selected shared analog bus.
 
 \begin{enumerate}
-    \item \textbf{Initial DC and IF checks.}
-    Start at a recorded ambient temperature with current-limited supplies and confirm supply rails, enable control, bias, and startup before applying RF stimulus.
-    The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keithley 2450 SMU},
-    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{DMM6500}, and
-    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Tektronix MSO58}.
-    Invention Studio lists a \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{500 MHz Keysight oscilloscope} and
-    \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{Fluke 179 multimeters}.
-    Use high-impedance probes for the buffered IF output.
-    Isolating the mixer supply current from other harness loads requires confirmation of the final board connections.
+    \item \textbf{DC bring-up and power.}
+    Record the ambient temperature and use current-limited supplies to verify the rails, enable control, bias, and startup before applying RF.
+    Measure mixer power from its supply voltage and current if the board allows that current to be isolated from other harness loads.
 
     \item \textbf{Conversion gain and shared IF path.}
-    With independently adjustable RF and LO sources near \(900\,\mathrm{MHz}\), sweep RF input level, LO drive, bias, and IF frequency over \(5\)--\(20\,\mathrm{MHz}\).
-    Determine differential RF-pad and single-ended IF-pad RMS voltages for conversion gain, and compare the shared-path response with extracted simulations, including loading and fixture corrections.
-    The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight vector signal generator} and
-    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}.
-    \unconfirmed{The generator model, frequency coverage, and simultaneous availability of independent RF and LO sources near 900 MHz need confirmation.}
-    \unconfirmed{An external RF balun covering 900 MHz or a verified differential RF source is also needed.}
-    A \(50\,\Omega\) analyzer connection requires a characterized interface consistent with the high-impedance IF specification.
+    Use independent RF and LO sources near \(900\,\mathrm{MHz}\), with a differential RF source or a calibrated external balun.
+    Vary RF input level, LO drive, and bias, and sweep the IF from \(5\) to \(20\,\mathrm{MHz}\).
+    Determine voltage gain from the differential RF input and single-ended IF output RMS voltages at the pads.
+    Use a high-impedance IF probe or a characterized interface that presents the specified load to the IF pad when driving a \(50\,\Omega\) analyzer.
+    Correct for fixture losses and compare the measured response with post-layout simulations under the same load.
 
     \item \textbf{RF matching and LO leakage.}
-    The Hive's \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight E5063A VNA} is a candidate for differential RF matching, using a calibrated two-port measurement at \texttt{RF\_P}/\texttt{RF\_N} and mixed-mode conversion to \(S_{\mathrm{dd}11}\).
-    \unconfirmed{The installed frequency option and a suitable two-port calibration kit require confirmation:}
-    \href{https://helpfiles.keysight.com/csg/e5063a/product_information/options.htm}{option 205 stops at 500 MHz; option 215 or higher covers 900 MHz}.
-    Use the N9000B for LO leakage at both RF pads once source levels, port loading, and fixture losses are calibrated.
+    With the LO driven, measure the two-port S-parameters at \texttt{RF\_P} and \texttt{RF\_N} using a vector network analyzer calibrated at \(900\,\mathrm{MHz}\). Convert the result to differential input reflection, \(S_{\mathrm{dd}11}\).
+    Measure LO leakage at each RF pad under the specified loading, correct for fixture losses, and report the lower of the two isolation values relative to the calibrated LO input.
 
-    \Needspace{8\baselineskip}
-    \item \textbf{IIP3 and noise figure: further consideration required.}
-    \unconfirmed{Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity; the complete stimulus setup is unconfirmed.}
-    \unconfirmed{A calibrated noise source or equivalent calibrated method and a suitable IF noise receiver are also unconfirmed.}
-    SSB noise-figure testing must account for receiver noise, image-band response, and RF fixture loss and imbalance.
-    Equipment access and a validated method must be resolved, potentially through collaboration.
+    \item \textbf{IIP3 and single-sideband noise figure.}
+    Apply two clean RF tones with an independent LO. Sweep the per-tone input power at the differential pads and extrapolate IIP3 from the fundamental and third-order products in the IF spectrum.
+    Measure single-sideband noise figure with a calibrated noise source or equivalent method, accounting for IF receiver noise, image-band response, and RF fixture loss and imbalance.
 
-    \item \textbf{Temperature characterization: further consideration required.}
-    The MILL lists a \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{FLIR ETS320 infrared camera} for surface thermal imaging, which may support diagnostics but does not establish controlled powered-DUT temperature sweeps or junction-temperature measurement.
-    \unconfirmed{Access to a calibrated chamber or thermal stage, temperature monitoring, and compatible electrical connections remains unconfirmed.}
-    Initial measurements will therefore be at recorded ambient conditions. A temperature-sweep method and access need further consideration.
+    \item \textbf{Temperature characterization.}
+    Take the initial measurements at ambient temperature. For a controlled sweep, stabilize the powered device at each setpoint and record the monitored temperature with the electrical measurements.
 \end{enumerate}
 
-For each completed measurement, record stimulus, load, calibration, supply, and temperature conditions, compare with pre-layout and post-layout results, and document discrepancies.
-Unresolved equipment requirements and unmeasured specifications will be reported explicitly.
+% Access to the setups for independent RF/LO drive, two-port RF calibration, two-tone linearity, calibrated noise figure, and powered temperature sweeps remains to be confirmed.
+For each completed measurement, record stimulus, load, calibration, supply, and temperature conditions. Compare results with pre-layout and post-layout simulations and identify any discrepancies or unmeasured specifications.

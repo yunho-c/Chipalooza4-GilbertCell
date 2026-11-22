@@ -1,0 +1,89 @@
+% Compile this file as the main document for the separate equipment attachment.
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{booktabs,tabularx}
+\usepackage{xcolor}
+\definecolor{linkblue}{HTML}{225A70}
+\usepackage[colorlinks=true,urlcolor=linkblue]{hyperref}
+\hypersetup{
+    pdftitle={Test Equipment | 900 MHz Gilbert-cell mixer},
+    pdfsubject={Chipalooza Challenge 4 proposal attachment}
+}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+
+\begin{document}
+\raggedright
+
+{\LARGE\bfseries Test Equipment\par}
+{\large Chipalooza Challenge \#4 -- 900~MHz low-power Gilbert-cell downconversion mixer\par}
+
+We will utilize equipment in makerspaces and RF laboratories at Georgia Tech.
+
+\smallskip
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.23}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.33\linewidth}
+                                >{\raggedright\arraybackslash}X l@{}}
+\toprule
+\textbf{Measurement} & \textbf{Equipment} & \textbf{Facility} \\
+\midrule
+DC bias, startup, and power &
+    Keithley 2450 source meter, DMM6500 multimeter & The Hive \\
+DC rail checks &
+    Fluke 179 multimeters & Invention Studio \\
+Buffered IF waveform, 5 to 20~MHz &
+    Tektronix MSO58 oscilloscope & The Hive \\
+Buffered IF waveform, 5 to 20~MHz &
+    Keysight 500~MHz mixed-signal oscilloscope & Invention Studio \\
+RF or LO stimulus near 900~MHz &
+    Keysight vector signal generator & The Hive \\
+IF spectra / LO leakage at RF pads &
+    Keysight N9000B signal analyzer & The Hive \\
+Differential RF input matching &
+    Keysight E5063A vector network analyzer & The Hive \\
+Package surface temperature &
+    FLIR ETS320 infrared camera & The MILL \\
+\bottomrule
+\end{tabularx}
+\endgroup
+
+% \subsection*{Equipment and configurations to confirm}
+\subsection*{Equipment Checklist}
+
+\textbf{Power and IF voltage.}
+Mixer-only power requires an independently measurable supply path on the harness board.
+IF gain requires a high-impedance probe with known loading, or a characterized interface to the \(50\,\Omega\) analyzer.
+
+\textbf{RF and LO drive.}
+The test uses 900~MHz RF and 890~MHz LO simultaneously.
+Confirm two independently adjustable sources and either a calibrated external balun for the \(100\,\Omega\) differential RF input or a differential source.
+
+\textbf{RF matching.}
+Confirm the E5063A has a frequency option covering 900~MHz and a two-port calibration kit.
+Option 205 ends at 500~MHz. Option 215 reaches 1.5~GHz.
+\href{https://helpfiles.keysight.com/csg/e5063a/product_information/options.htm}{Keysight option guide}
+
+\textbf{Two-tone linearity (IIP3).}
+Requires two clean RF tones and an independent LO.
+Confirm a multitone source or two RF sources with a combiner and adequate isolation.
+
+\textbf{Single-sideband noise figure.}
+Confirm a calibrated noise source or equivalent calibrated setup and a suitable IF noise receiver.
+Calibration must account for receiver noise, image-band response, and RF fixture loss and imbalance.
+
+\textbf{Temperature sweeps.}
+Initial measurements are planned at ambient temperature.
+Powered sweeps require a calibrated chamber or thermal stage, temperature monitoring, and RF connections to the device.
+
+% \smallskip
+% {\small\textbf{Facility inventories}\newline
+%  \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{The Hive electronics benchtop}
+%  \textperiodcentered{} \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{Invention Studio electronics}
+%  \textperiodcentered{} \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{The MILL measurement equipment}\par}
+
+\end{document}
