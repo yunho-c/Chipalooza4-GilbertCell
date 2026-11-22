@@ -32,17 +32,17 @@ SkyWater SKY130 \\
 RF operating region &
 Around \(900\,\mathrm{MHz}\) \\
 
-Nominal RF frequency &
+RF frequency &
 \(900\,\mathrm{MHz}\) \\
 
-Nominal IF frequency &
+IF frequency &
 \(10\,\mathrm{MHz}\) \\
 
 IF characterization range &
 \(5\)--\(20\,\mathrm{MHz}\) \\
 
 Core supply voltage &
-\(1.8\,\mathrm{V}\) nominal \\
+\(1.8\,\mathrm{V}\) \\
 
 Supply characterization &
 \(1.62\)--\(1.98\,\mathrm{V}\),
@@ -76,9 +76,4 @@ High-impedance measurement input \\
 \end{table}
 
 Voltage conversion gain is defined using the single-ended IF RMS voltage at the selected shared measurement pad relative to the single-ended RF-pad RMS voltage, with the specified input match and high-impedance IF load.
-The gain includes the on-chip baluns, mixer core, output interface, and selected shared output path; external test-fixture losses will be documented separately.
-Specifications will be evaluated under clearly defined RF input power, LO drive, load impedance, supply voltage, and temperature conditions.
-Transistor operating voltages and RF input levels will remain within the applicable PDK and pad absolute limits.
-
-The design will be characterized across process, voltage, and temperature corners, including post-layout extracted parasitics.
-The acceptance limits and simulation methods will be finalized during schematic review with the challenge organizers.
+The gain includes the on-chip baluns, mixer core, output interface, and selected shared output path.
