@@ -12,33 +12,50 @@
 % Rule 19 requires post-layout commercial PVT verification; a maximum temperature of 110 degC is acceptable.
 % The exact temperature endpoints and process corners must be agreed during schematic review.
 % Full PVT simulation remains required even while measured temperature-sweep access is unresolved.
+% SKY130 devices: https://skywater-pdk.readthedocs.io/en/main/rules/device-details.html
+% ngspice analyses and limitations: https://ngspice.sourceforge.io/docs.html
+% Magic: https://opencircuitdesign.com/magic/
+% Netgen: https://opencircuitdesign.com/netgen/
+% A listed vector signal generator is a candidate, not proof that 900 MHz generation is unavailable.
 
 \section{Verification and Measurement Plan}
 \subsection{Pre-Layout Verification}
-% Breadboard에 만들어보고 해야 할까? 근데 이런 고주파수가 breadboard에 되긴 하는 건가?
+
+Pre-layout verification will use Xschem schematics and ngspice transistor-level simulations with SKY130 PDK compact models.
+Initial device candidates are \texttt{sky130\_fd\_pr\_\_nfet\_01v8} and \texttt{sky130\_fd\_pr\_\_pfet\_01v8}; device sizes, bias currents, and the final device choices will be determined during schematic design.
+A solderless breadboard is not a representative \(900\,\mathrm{MHz}\) IC prototype because its interconnect and discrete-device parasitics differ from the chip.
+Any RF fixture prototype will instead use a PCB with controlled impedance and short connections; breadboards may support DC or slow-control checks.
+
 \begin{itemize}
     \item Verify DC operating points and device operating regions.
 
     \item Evaluate conversion gain across RF frequency, LO drive, and bias conditions.
 
-    \item Verify the on-chip RF and LO balun amplitude and phase balance across operating conditions.
-    Include their noise and distortion contributions and all interface and bias circuitry in the measured gain, noise figure, and total DC power.
+    \item Verify the on-chip LO balun amplitude and phase balance, and sweep differential RF amplitude/phase imbalance and input common-mode voltage.
+    Include all interface and bias circuitry in the simulated gain, noise, and total DC power.
 
-    \item Characterize RF input impedance and \(S_{11}\).
+    \item Characterize differential RF input impedance and \(S_{\mathrm{dd}11}\) under the specified LO drive.
 
-    \item Evaluate linearity using two-tone RF tests and estimate IIP3.
+    \item Evaluate linearity using two-tone RF transient simulations and estimate IIP3 from the IF spectra.
 
     \item Evaluate LO-to-RF feedthrough and port isolation.
 
     \item Analyze noise performance and power consumption.
 
-    \item Evaluate flicker-noise contribution and conversion gain across the \(5\)--\(20\,\mathrm{MHz}\) IF range under periodic LO drive. % 이미 transistor 뭘 쓸 것인지 아는 거임?
-    Verify the shared IF path using the output-buffer impedance and available harness parasitic models, with sensitivity sweeps where extraction data are incomplete. % 이거를 직접 만들어보지 않고 알 수 있는 거임? 다른 팀이 뭘 만들지를 알고?
+    \item Evaluate conversion gain across the \(5\)--\(20\,\mathrm{MHz}\) IF range using LO-driven transient simulations and spectral analysis.
+    Assess flicker and thermal noise using PDK noise parameters and a validated time-varying noise method.
+    Establishing that method in the open-source flow remains an explicit task; an ordinary DC-linearized ngspice \texttt{.noise} result alone does not establish mixer noise figure under LO switching.
+
+    \item Model the shared IF path with the selected switch, common bus, off-state branch loading, pad/package parasitics, output-buffer impedance, and external load.
+    Request the harness netlist and extracted parasitics from the organizers; other teams' complete circuits are not assumed to be known.
+    Until those data are available, sweep uncertain resistance, capacitance, and leakage and report the loading assumptions and passing range.
+    These are provisional bounds, not verification of the final integrated chip or all inter-project coupling.
 
     \item Perform process, voltage, temperature, and mismatch sensitivity analyses.
 \end{itemize}
 
 
+\Needspace{18\baselineskip}
 \subsection{Physical Design and Post-Layout Verification}
 
 The mixer will be laid out using the SKY130 PDK, with attention to differential symmetry, device matching, parasitic coupling, and RF signal routing.
@@ -46,26 +63,27 @@ The mixer will be laid out using the SKY130 PDK, with attention to differential 
 Verification will include:
 
 \begin{itemize}
-    \item Design Rule Check (DRC)
+    \item Design Rule Check (DRC) using Magic and the SKY130 rule deck
 
-    \item Layout Versus Schematic (LVS)
+    \item Layout Versus Schematic (LVS) using Netgen and the SKY130 setup
 
-    \item Parasitic extraction (PEX)
+    \item Parasitic extraction (PEX) using Magic, followed by ngspice simulation of the extracted netlist
 
-    \item Post-layout conversion gain, linearity, isolation, and power simulations
+    \item Post-layout conversion gain, linearity, isolation, and power simulations using ngspice, with Python scripts for sweeps and spectral analysis
 
-    \item PVT verification using reproducible open-source workflows, including temperature-corner simulations across the agreed commercial range % open source 뭐 쓸 건지 specified해줘야지
+    \item PVT verification using ngspice with the SKY130 TT, FF, SS, FS, and SF model corners, supply sweeps, and temperature sweeps across the agreed commercial range
 \end{itemize}
 
 
 \subsection{Silicon Characterization}
-% 장비명에 하이퍼링크 걸려있다고 써줄 것
-% 없는 기기들을 말할 때 없는 기기들 빨간색으로 해줘.
+
 The design team will carry out silicon characterization, with collaborative measurements where equipment access requires them.
-The harness provides power, control, and signal access to the IP block. 
+The harness provides power, control, and signal access to the IP block.
 Characterization uses external stimulus and measurement equipment.
-Following fabrication, RF and LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
+Following fabrication, differential RF and single-ended LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
 Public Georgia Tech makerspace inventories support the following plan.
+Instrument names below are hyperlinks to the facilities' equipment listings.
+\unconfirmed{Red text identifies equipment, options, or complete measurement configurations whose availability is unconfirmed.}
 
 \begin{enumerate}
     \item \textbf{Initial DC and IF checks.}
@@ -80,26 +98,30 @@ Public Georgia Tech makerspace inventories support the following plan.
 
     \item \textbf{Conversion gain and shared IF path.}
     With independently adjustable RF and LO sources near \(900\,\mathrm{MHz}\), sweep RF input level, LO drive, bias, and IF frequency over \(5\)--\(20\,\mathrm{MHz}\).
-    Measure RF-pad and IF-pad RMS voltages for conversion gain, and compare the shared-path response with extracted simulations, including loading and fixture corrections.
+    Determine differential RF-pad and single-ended IF-pad RMS voltages for conversion gain, and compare the shared-path response with extracted simulations, including loading and fixture corrections.
     The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight vector signal generator} and
-    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}, but the generator model and simultaneous independent RF/LO source availability remain unconfirmed.
-    This stimulus configuration therefore needs further consideration before these measurements can be committed to. % 이 정도의 고주파수를 낼 수 있는 기기가 없는 건가?
+    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}.
+    \unconfirmed{The generator model, frequency coverage, and simultaneous availability of independent RF and LO sources near 900 MHz need confirmation.}
+    The listing does not show that such RF generation is unavailable; it leaves the exact source configuration unresolved.
+    \unconfirmed{An external RF balun covering 900 MHz or a verified differential RF source is also needed; access and calibration remain to be established.}
     A \(50\,\Omega\) analyzer connection requires a characterized interface consistent with the high-impedance IF specification.
 
     \item \textbf{RF matching and LO leakage.}
-    The Hive's \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight E5063A VNA} is a candidate for RF \(S_{11}\), but its installed frequency option and calibration kit require confirmation:
+    The Hive's \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight E5063A VNA} is a candidate for differential RF matching, using a calibrated two-port measurement at \texttt{RF\_P}/\texttt{RF\_N} and mixed-mode conversion to \(S_{\mathrm{dd}11}\).
+    \unconfirmed{The installed frequency option and a suitable two-port calibration kit require confirmation:}
     \href{https://helpfiles.keysight.com/csg/e5063a/product_information/options.htm}{option 205 stops at 500 MHz; option 215 or higher covers 900 MHz}.
-    Use the N9000B for LO leakage at the RF port once source levels, port loading, and fixture losses are calibrated.
+    Use the N9000B for LO leakage at both RF pads once source levels, port loading, and fixture losses are calibrated.
 
+    \Needspace{8\baselineskip}
     \item \textbf{IIP3 and noise figure: further consideration required.}
-    Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity.
-    Calibrated SSB noise-figure testing requires a noise source or equivalent calibrated method, a suitable IF receiver, and corrections for receiver noise, image-band response, and fixture losses.
-    The reviewed makerspace inventories do not establish either complete setup.
+    \unconfirmed{Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity; the complete stimulus setup is unconfirmed.}
+    \unconfirmed{A calibrated noise source or equivalent calibrated method and a suitable IF noise receiver are also unconfirmed.}
+    SSB noise-figure testing must account for receiver noise, image-band response, and RF fixture loss and imbalance.
     Equipment access and a validated method must be resolved, potentially through collaboration, before promising these silicon measurements; simulation results will be identified separately.
 
     \item \textbf{Temperature characterization: further consideration required.}
     The MILL lists a \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{FLIR ETS320 infrared camera} for surface thermal imaging, which may support diagnostics but does not establish controlled powered-DUT temperature sweeps or junction-temperature measurement.
-    A calibrated chamber or thermal stage, monitoring method, and compatible electrical connections have not been confirmed in the inventories. % reviewed inventories라는 말 지워주고
+    \unconfirmed{Access to a calibrated chamber or thermal stage, temperature monitoring, and compatible electrical connections remains unconfirmed.}
     Initial measurements will therefore be at recorded ambient conditions; a temperature-sweep method and access need further consideration.
 \end{enumerate}
 

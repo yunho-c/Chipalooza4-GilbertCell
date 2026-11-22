@@ -4,15 +4,17 @@ Internal working note, reviewed November 21, 2026. The measurement plan is in [s
 
 Public listings confirm listed equipment, not team access, reservations, calibration, installed options, accessories, or simultaneous availability. These need checking before committing to measurements.
 
+The proposal now uses differential RF (`RF_P`/`RF_N`, two dedicated pads), single-ended LO (one dedicated pad with an on-chip balun), and shared IF. The RF reference is 100 Ω differential. A single-ended RF generator therefore also needs an external balun or verified differential fixture; availability is unconfirmed. All three dedicated pads are used, so adding a dedicated IF requires revising the allocation or an approved resource exception.
+
 ## The Hive: all 21 listed benchtop entries
 
 Each instrument name links to the facility's availability listing, rather than implying that a manufacturer's product page proves local availability.
 
 | Listed equipment | Potential project use / limitation |
 | --- | --- |
-| [Keysight E5063A][hive] | RF matching; installed 900 MHz coverage and calibration kit unconfirmed. |
+| [Keysight E5063A][hive] | Differential RF matching via calibrated two-port data/mixed-mode conversion; installed 900 MHz coverage and calibration kit unconfirmed. |
 | [Keysight N9000B][hive] | IF spectra and RF/LO leakage; check coupling, noise floor, calibration, and IF loading. |
-| [Keysight vector signal generator][hive] | Candidate RF or LO source; model, options, source count, and simultaneous availability unspecified. |
+| [Keysight vector signal generator][hive] | Candidate RF or LO source; model, frequency coverage, options, source count, and simultaneous availability unspecified. This is not evidence that 900 MHz generation is unavailable. |
 | [Keysight N1913A][hive] | RF power calibration; compatible power sensor unconfirmed. |
 | [Keysight E4980-AL (inventory spelling)][hive] | Passive-component impedance checks within its supported range. |
 | [Tektronix MSO58][hive] | IF waveform, startup, and control checks with suitable probes. |
@@ -72,8 +74,8 @@ The [Georgia Tech makerspace directory](https://experiential.learning.gatech.edu
 | Measurement | Assessment from reviewed public information |
 | --- | --- |
 | Ambient DC, startup, IF waveforms | Suitable instrument classes are listed. Confirm probes, board connections, training, and access; mixer-only power measurement depends on supply isolation. |
-| Gain/shared IF response, 5–20 MHz; LO leakage | Receiver/scope candidates exist. Independent calibrated RF and LO stimulus, accessories, and simultaneous access remain unconfirmed: further consideration required. |
-| RF input matching at 900 MHz | E5063A option 205 stops at 500 MHz; option 215 or higher is needed. Installed option/calibration kit unconfirmed: further consideration required. |
+| Gain/shared IF response, 5–20 MHz; LO leakage | Receiver/scope candidates exist. Independent calibrated RF/LO stimulus, external RF balun or differential source, accessories, and simultaneous access remain unconfirmed: further consideration required. |
+| Differential RF input matching at 900 MHz | E5063A option 205 stops at 500 MHz; option 215 or higher is needed. Installed option/two-port calibration kit unconfirmed: further consideration required. |
 | Two-tone IIP3 | Two RF tones plus independent LO, combining/isolation, and source purity not established: further consideration required. |
 | Calibrated SSB noise figure | Noise source or equivalent calibrated method, IF receiver suitability, receiver-noise/image-band/fixture corrections not established: further consideration required. |
 | Temperature sweeps | Controlled powered-DUT stage/chamber and monitoring not established. FLIR surface images alone are insufficient: further consideration required. Required post-layout PVT simulations remain in scope. |
