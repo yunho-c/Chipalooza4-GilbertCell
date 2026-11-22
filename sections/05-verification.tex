@@ -73,13 +73,13 @@ The harness supplies power and control. Apply differential RF and single-ended L
 \begin{enumerate}
     \item \textbf{DC bring-up and power.}
     Record the ambient temperature and use current-limited supplies to verify the rails, enable control, bias, and startup before applying RF.
-    Measure mixer power from its supply voltage and current if the board allows that current to be isolated from other harness loads.
+    Measure mixer power from its supply voltage and current.
 
     \item \textbf{Conversion gain and shared IF path.}
     Use independent RF and LO sources near \(900\,\mathrm{MHz}\), with a differential RF source or a calibrated external balun.
     Vary RF input level, LO drive, and bias, and sweep the IF from \(5\) to \(20\,\mathrm{MHz}\).
     Determine voltage gain from the differential RF input and single-ended IF output RMS voltages at the pads.
-    Use a high-impedance IF probe or a characterized interface that presents the specified load to the IF pad when driving a \(50\,\Omega\) analyzer.
+    Use a high-impedance IF probe when driving a \(50\,\Omega\) analyzer.
     Correct for fixture losses and compare the measured response with post-layout simulations under the same load.
 
     \item \textbf{RF matching and LO leakage.}
