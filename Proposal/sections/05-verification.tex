@@ -23,8 +23,7 @@
 
 Pre-layout verification will use Xschem schematics and ngspice transistor-level simulations with SKY130 PDK compact models.
 Initial device candidates are \texttt{sky130\_fd\_pr\_\_nfet\_01v8} and \texttt{sky130\_fd\_pr\_\_pfet\_01v8}; device sizes, bias currents, and the final device choices will be determined during schematic design.
-A solderless breadboard is not a representative \(900\,\mathrm{MHz}\) IC prototype because its interconnect and discrete-device parasitics differ from the chip.
-Any RF fixture prototype will instead use a PCB with controlled impedance and short connections; breadboards may support DC or slow-control checks.
+Any RF fixture prototype will instead use a PCB with controlled impedance and short connections, while breadboards may support DC or slow-control checks.
 
 \begin{itemize}
     \item Verify DC operating points and device operating regions.
@@ -77,11 +76,10 @@ Verification will include:
 
 \subsection{Silicon Characterization}
 
-The design team will carry out silicon characterization, with collaborative measurements where equipment access requires them.
+We will carry out silicon characterization, with collaborative measurements in makerspaces and laboratories at Georgia Tech (e.g., The Hive) where equipment access requires them.
 The harness provides power, control, and signal access to the IP block.
-Characterization uses external stimulus and measurement equipment.
+% Characterization uses external stimulus and measurement equipment.
 Following fabrication, differential RF and single-ended LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
-Public Georgia Tech makerspace inventories support the following plan.
 Instrument names below are hyperlinks to the facilities' equipment listings.
 \unconfirmed{Red text identifies equipment, options, or complete measurement configurations whose availability is unconfirmed.}
 
@@ -102,8 +100,7 @@ Instrument names below are hyperlinks to the facilities' equipment listings.
     The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight vector signal generator} and
     \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}.
     \unconfirmed{The generator model, frequency coverage, and simultaneous availability of independent RF and LO sources near 900 MHz need confirmation.}
-    The listing does not show that such RF generation is unavailable; it leaves the exact source configuration unresolved.
-    \unconfirmed{An external RF balun covering 900 MHz or a verified differential RF source is also needed; access and calibration remain to be established.}
+    \unconfirmed{An external RF balun covering 900 MHz or a verified differential RF source is also needed.}
     A \(50\,\Omega\) analyzer connection requires a characterized interface consistent with the high-impedance IF specification.
 
     \item \textbf{RF matching and LO leakage.}
@@ -117,12 +114,12 @@ Instrument names below are hyperlinks to the facilities' equipment listings.
     \unconfirmed{Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity; the complete stimulus setup is unconfirmed.}
     \unconfirmed{A calibrated noise source or equivalent calibrated method and a suitable IF noise receiver are also unconfirmed.}
     SSB noise-figure testing must account for receiver noise, image-band response, and RF fixture loss and imbalance.
-    Equipment access and a validated method must be resolved, potentially through collaboration, before promising these silicon measurements; simulation results will be identified separately.
+    Equipment access and a validated method must be resolved, potentially through collaboration.
 
     \item \textbf{Temperature characterization: further consideration required.}
     The MILL lists a \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{FLIR ETS320 infrared camera} for surface thermal imaging, which may support diagnostics but does not establish controlled powered-DUT temperature sweeps or junction-temperature measurement.
     \unconfirmed{Access to a calibrated chamber or thermal stage, temperature monitoring, and compatible electrical connections remains unconfirmed.}
-    Initial measurements will therefore be at recorded ambient conditions; a temperature-sweep method and access need further consideration.
+    Initial measurements will therefore be at recorded ambient conditions. A temperature-sweep method and access need further consideration.
 \end{enumerate}
 
 For each completed measurement, record stimulus, load, calibration, supply, and temperature conditions, compare with pre-layout and post-layout results, and document discrepancies.

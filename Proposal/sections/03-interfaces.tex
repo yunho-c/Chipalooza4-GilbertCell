@@ -62,7 +62,7 @@ Using the extra pad for RF removes the on-chip RF conversion stage and its noise
 \texttt{IF\_OUT} is proposed to use one shared analog bus, with a buffer designed for the complete output path and specified external load.
 The shared path will be verified for gain error, phase response, noise, and distortion over \(5\)--\(20\,\mathrm{MHz}\), including switch resistance, interconnect and pad capacitance, package parasitics, and output-buffer impedance.
 All three dedicated pads are used, so a dedicated IF fallback would require revising the RF interface to single-ended with an on-chip RF balun, or obtaining an approved resource exception.
-The shared-path feasibility must therefore be resolved before finalizing this allocation.
+% The shared-path feasibility must therefore be resolved before finalizing this allocation.
 
 The baseline circuit will target a \(1.8\,\mathrm{V}\) core supply, with input and output protection compatible with the harness pad interface.
 External RF and LO signal generators will be used for characterization.
