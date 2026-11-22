@@ -15,7 +15,7 @@
 
 \section{Verification and Measurement Plan}
 \subsection{Pre-Layout Verification}
-
+% Breadboard에 만들어보고 해야 할까? 근데 이런 고주파수가 breadboard에 되긴 하는 건가?
 \begin{itemize}
     \item Verify DC operating points and device operating regions.
 
@@ -32,8 +32,8 @@
 
     \item Analyze noise performance and power consumption.
 
-    \item Evaluate flicker-noise contribution and conversion gain across the \(5\)--\(20\,\mathrm{MHz}\) IF range under periodic LO drive.
-    Verify the shared IF path using the output-buffer impedance and available harness parasitic models, with sensitivity sweeps where extraction data are incomplete.
+    \item Evaluate flicker-noise contribution and conversion gain across the \(5\)--\(20\,\mathrm{MHz}\) IF range under periodic LO drive. % 이미 transistor 뭘 쓸 것인지 아는 거임?
+    Verify the shared IF path using the output-buffer impedance and available harness parasitic models, with sensitivity sweeps where extraction data are incomplete. % 이거를 직접 만들어보지 않고 알 수 있는 거임? 다른 팀이 뭘 만들지를 알고?
 
     \item Perform process, voltage, temperature, and mismatch sensitivity analyses.
 \end{itemize}
@@ -54,23 +54,25 @@ Verification will include:
 
     \item Post-layout conversion gain, linearity, isolation, and power simulations
 
-    \item PVT verification using reproducible open-source workflows, including temperature-corner simulations across the agreed commercial range
+    \item PVT verification using reproducible open-source workflows, including temperature-corner simulations across the agreed commercial range % open source 뭐 쓸 건지 specified해줘야지
 \end{itemize}
 
 
 \subsection{Silicon Characterization}
-
+% 장비명에 하이퍼링크 걸려있다고 써줄 것
+% 없는 기기들을 말할 때 없는 기기들 빨간색으로 해줘.
 The design team will carry out silicon characterization, with collaborative measurements where equipment access requires them.
-The harness provides power, control, and signal access to the IP block; characterization uses external stimulus and measurement equipment.
+The harness provides power, control, and signal access to the IP block. 
+Characterization uses external stimulus and measurement equipment.
 Following fabrication, RF and LO signals will be applied through the dedicated test pads, and the buffered IF output will be accessed through the selected shared analog bus.
-Public Georgia Tech makerspace inventories support the following plan, but do not establish reservations, installed options, calibration, or a complete test setup.
+Public Georgia Tech makerspace inventories support the following plan.
 
 \begin{enumerate}
     \item \textbf{Initial DC and IF checks.}
     Start at a recorded ambient temperature with current-limited supplies and confirm supply rails, enable control, bias, and startup before applying RF stimulus.
     The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keithley 2450 SMU},
     \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{DMM6500}, and
-    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Tektronix MSO58};
+    \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Tektronix MSO58}.
     Invention Studio lists a \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{500 MHz Keysight oscilloscope} and
     \href{https://inventionstudio.gatech.edu/tools-equipment/electronics/}{Fluke 179 multimeters}.
     Use high-impedance probes for the buffered IF output.
@@ -81,14 +83,13 @@ Public Georgia Tech makerspace inventories support the following plan, but do no
     Measure RF-pad and IF-pad RMS voltages for conversion gain, and compare the shared-path response with extracted simulations, including loading and fixture corrections.
     The Hive lists a \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight vector signal generator} and
     \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{N9000B signal analyzer}, but the generator model and simultaneous independent RF/LO source availability remain unconfirmed.
-    This stimulus configuration therefore needs further consideration before these measurements can be committed to.
+    This stimulus configuration therefore needs further consideration before these measurements can be committed to. % 이 정도의 고주파수를 낼 수 있는 기기가 없는 건가?
     A \(50\,\Omega\) analyzer connection requires a characterized interface consistent with the high-impedance IF specification.
 
     \item \textbf{RF matching and LO leakage.}
     The Hive's \href{https://wiki.hivemakerspace.com/explore/electronics-benchtop/}{Keysight E5063A VNA} is a candidate for RF \(S_{11}\), but its installed frequency option and calibration kit require confirmation:
     \href{https://helpfiles.keysight.com/csg/e5063a/product_information/options.htm}{option 205 stops at 500 MHz; option 215 or higher covers 900 MHz}.
     Use the N9000B for LO leakage at the RF port once source levels, port loading, and fixture losses are calibrated.
-    These setups need further consideration; the public inventory alone does not establish readiness.
 
     \item \textbf{IIP3 and noise figure: further consideration required.}
     Two-tone IIP3 requires two simultaneous RF tones and an independent LO, with a suitable combiner or verified multitone source and adequate source purity.
@@ -98,9 +99,8 @@ Public Georgia Tech makerspace inventories support the following plan, but do no
 
     \item \textbf{Temperature characterization: further consideration required.}
     The MILL lists a \href{https://mill.mse.gatech.edu/equipment/measurement-team/}{FLIR ETS320 infrared camera} for surface thermal imaging, which may support diagnostics but does not establish controlled powered-DUT temperature sweeps or junction-temperature measurement.
-    A calibrated chamber or thermal stage, monitoring method, and compatible electrical connections have not been confirmed in the reviewed inventories.
+    A calibrated chamber or thermal stage, monitoring method, and compatible electrical connections have not been confirmed in the inventories. % reviewed inventories라는 말 지워주고
     Initial measurements will therefore be at recorded ambient conditions; a temperature-sweep method and access need further consideration.
-    Required post-layout PVT simulations across the agreed commercial range will still be performed.
 \end{enumerate}
 
 For each completed measurement, record stimulus, load, calibration, supply, and temperature conditions, compare with pre-layout and post-layout results, and document discrepancies.

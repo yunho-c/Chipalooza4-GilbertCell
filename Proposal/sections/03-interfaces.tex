@@ -8,7 +8,7 @@
 % Internal bias references use Rules 7.2/7.3, subject to final allocation.
 
 \section{Pinout and I/O Requirements}
-
+% 근데 여기서 그럼 RF나 LO중에 하나를 differential로 바꿀 수 있지 않나? 일관성이 떨어지나? balun을 최대한 안 쓰는 것이 좋을 것 같긴 한데
 We request two dedicated analog signal pads for RF and LO, and one shared analog signal connection for the buffered IF output.
 
 \begin{table}[htbp]
@@ -58,9 +58,8 @@ Each external RF and LO input therefore requires one signal pad, while the inter
 \texttt{RF\_IN} and \texttt{LO\_IN} require dedicated connections suitable for \(900\,\mathrm{MHz}\) signaling.
 \texttt{IF\_OUT} is proposed to use one shared analog bus, with a buffer designed for the complete output path and specified external load.
 The shared path will be verified for gain error, phase response, noise, and distortion over \(5\)--\(20\,\mathrm{MHz}\), including switch resistance, interconnect and pad capacitance, package parasitics, and output-buffer impedance.
-If this path cannot meet the measurement requirements, a dedicated IF pad will be discussed with the organizers as a fallback; it is not included in the baseline two-pad request.
-The final pad arrangement and compatibility with the SKY130 pad library will be confirmed during proposal and schematic review.
+If this path cannot meet the measurement requirements, a dedicated IF pad will be discussed with the organizers as a fallback.
 
-The baseline circuit will target a nominal \(1.8\,\mathrm{V}\) core supply, with input and output protection compatible with the harness pad interface.
-The harness provides \(1.8\,\mathrm{V}\) digital and \(3.3\,\mathrm{V}\) analog supplies; the final supply connection and protection scheme for the \(1.8\,\mathrm{V}\) mixer will be confirmed during integration review.
-External RF and LO signal generators will be used for characterization; an on-chip PLL or LO frequency synthesizer is outside the scope of this proposal.
+The baseline circuit will target a \(1.8\,\mathrm{V}\) core supply, with input and output protection compatible with the harness pad interface.
+External RF and LO signal generators will be used for characterization.
+An on-chip PLL or LO frequency synthesizer is outside the scope of this proposal.
