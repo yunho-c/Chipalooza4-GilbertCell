@@ -1,7 +1,9 @@
 % !TeX root = ../proposal.tex
 % Rules 6.4/9: Define appropriate typical/min/max values and absolute limits.
 % These are preliminary design targets, not measured results or mandatory challenge values.
-% The 1.62--1.98 V range is our +/-10 percent supply sweep, subject to PDK limits.
+% The supply sweep is 1.62--1.95 V; the upper endpoint respects the selected 1.8 V FET model range.
+% Device-terminal limits must still be checked separately from the supply voltage.
+% Source: https://skywater-pdk.readthedocs.io/en/main/rules/device-details.html
 % Final LO drive, RF input limits, pad/device ratings, and measurement loading remain to be set.
 % Active Gilbert mixers can have voltage conversion gain above unity using supply power.
 % The +5 dB voltage-gain target is an RMS voltage ratio of approximately 1.78, not a power-gain claim.
@@ -45,8 +47,11 @@ Core supply voltage &
 \(1.8\,\mathrm{V}\) \\
 
 Supply characterization &
-\(1.62\)--\(1.98\,\mathrm{V}\),
+\(1.62\)--\(1.95\,\mathrm{V}\),
 subject to PDK limits \\
+
+RF reference impedance &
+\(100\,\Omega\) differential \\
 
 Voltage conversion gain &
 \(\geq 5\,\mathrm{dB}\) nominal;
@@ -55,7 +60,7 @@ Voltage conversion gain &
 Single-sideband noise figure &
 \(\leq 15\,\mathrm{dB}\) nominal target \\
 
-Input return loss (\(S_{11}\)) &
+Differential RF reflection (\(S_{\mathrm{dd}11}\)) &
 \(\leq -10\,\mathrm{dB}\)
 at nominal RF frequency \\
 
@@ -75,5 +80,7 @@ High-impedance measurement input \\
 \end{tabularx}
 \end{table}
 
-Voltage conversion gain is defined using the single-ended IF RMS voltage at the selected shared measurement pad relative to the single-ended RF-pad RMS voltage, with the specified input match and high-impedance IF load.
-The gain includes the on-chip baluns, mixer core, output interface, and selected shared output path.
+Voltage conversion gain is defined as \(20\log_{10}(V_{\mathrm{IF,rms}}/V_{\mathrm{RF,diff,rms}})\), using the single-ended IF voltage at the selected shared measurement pad and the differential voltage between \texttt{RF\_P} and \texttt{RF\_N}, with the specified match and high-impedance IF load.
+The gain includes the mixer core, output interface, and selected shared output path, with the on-chip LO balun driven under specified conditions.
+RF input power for IIP3 is the per-tone available power of the differential source at the pad pair; external RF fixture loss is de-embedded.
+LO-to-RF isolation will be measured at both RF pads and reported for the worse result.

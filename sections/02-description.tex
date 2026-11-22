@@ -18,9 +18,9 @@ The baseline targets a nominal IF of \(10\,\mathrm{MHz}\), with characterization
 It will consist of the following subcircuits:
 
 \begin{enumerate}
-    \item \textbf{RF Input Balun and Matching Interface:}
-    Converts the single-ended RF input into a differential signal on chip and provides the input matching interface.
-    Its noise, loss, and amplitude and phase balance will be included in the mixer characterization.
+    \item \textbf{Differential RF Input and Matching Interface:}
+    Accepts a differential RF signal through two dedicated pads and provides the input matching and common-mode bias interface.
+    No on-chip RF balun is included in the baseline.
 
     \item \textbf{RF Transconductance Stage:}
     Converts the incoming RF voltage into a differential current for frequency conversion.
@@ -42,5 +42,6 @@ It will consist of the following subcircuits:
     Supply decoupling and bias filtering will be included, with startup circuitry provided if required by the selected bias topology.
 \end{enumerate}
 
-Input impedance matching will be considered for compatibility with standard \(50\,\Omega\) RF measurement equipment.
+The reference impedances are \(100\,\Omega\) differential at RF and \(50\,\Omega\) single-ended at LO.
+Testing with a single-ended RF generator requires an external balun or a verified differential source, with fixture loss and imbalance calibrated at the RF pad pair.
 The matching network will be designed and characterized together with the input circuitry and relevant pad parasitics.

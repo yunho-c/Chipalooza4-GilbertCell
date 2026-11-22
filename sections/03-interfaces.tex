@@ -1,15 +1,18 @@
 % !TeX root = ../proposal.tex
 % Rules 6.2, 7.6, and 21: List I/O and request dedicated signal pads within the three-pad limit.
 % Rules 7.5/22: Up to four shared analog buses; request one for the buffered IF output.
-% RF and LO use one dedicated pad each because their baluns are on chip.
+% RF uses two dedicated pads; single-ended LO uses one pad and an on-chip balun.
+% Asymmetric external interfaces are compatible with a double-balanced internal core.
+% Direct differential RF avoids an on-chip conversion stage ahead of the RF transconductor.
+% A single-ended bench source still needs an external RF balun or differential fixture.
 % Rule 7.4 provides digital control resources; ENABLE does not consume an analog signal pad.
 % Rules 7.1/10 specify 1.8 V digital and 3.3 V analog harness domains and I/O protection.
 % A 1.8 V analog core is our design choice; its actual supply connection must be confirmed.
 % Internal bias references use Rules 7.2/7.3, subject to final allocation.
 
 \section{Pinout and I/O Requirements}
-% 근데 여기서 그럼 RF나 LO중에 하나를 differential로 바꿀 수 있지 않나? 일관성이 떨어지나? balun을 최대한 안 쓰는 것이 좋을 것 같긴 한데
-We request two dedicated analog signal pads for RF and LO, and one shared analog signal connection for the buffered IF output.
+
+We request three dedicated analog signal pads: two for differential RF and one for single-ended LO, plus one shared analog signal connection for the buffered IF output.
 
 \begin{table}[htbp]
 \centering
@@ -22,10 +25,9 @@ We request two dedicated analog signal pads for RF and LO, and one shared analog
 \textbf{Description} \\
 \midrule
 
-\texttt{RF\_IN} &
+\texttt{RF\_P / RF\_N} &
 Input &
-Single-ended RF input, nominally
-\(900\,\mathrm{MHz}\), with on-chip balun \\
+Differential RF input, nominally \(900\,\mathrm{MHz}\); two dedicated pads, no on-chip RF balun \\
 
 \texttt{LO\_IN} &
 Input &
@@ -51,14 +53,16 @@ Harness bias references; final allocation to be confirmed \\
 \end{tabularx}
 \end{table}
 
-The on-chip RF and LO baluns will generate the differential signals required by the Gilbert-cell core.
-Each external RF and LO input therefore requires one signal pad, while the internal mixer core is driven differentially.
+RF is supplied differentially, while the on-chip LO balun generates differential LO drive.
+Both internal signal paths remain differential, as required by the double-balanced core; their external interfaces need not be identical.
+Using the extra pad for RF removes the on-chip RF conversion stage and its noise, distortion, and power contributions, while retaining single-ended LO drive.
 
 \textbf{Pad requirements:}
-\texttt{RF\_IN} and \texttt{LO\_IN} require dedicated connections suitable for \(900\,\mathrm{MHz}\) signaling.
+\texttt{RF\_P}, \texttt{RF\_N}, and \texttt{LO\_IN} require dedicated connections suitable for \(900\,\mathrm{MHz}\) signaling.
 \texttt{IF\_OUT} is proposed to use one shared analog bus, with a buffer designed for the complete output path and specified external load.
 The shared path will be verified for gain error, phase response, noise, and distortion over \(5\)--\(20\,\mathrm{MHz}\), including switch resistance, interconnect and pad capacitance, package parasitics, and output-buffer impedance.
-If this path cannot meet the measurement requirements, a dedicated IF pad will be discussed with the organizers as a fallback.
+All three dedicated pads are used, so a dedicated IF fallback would require revising the RF interface to single-ended with an on-chip RF balun, or obtaining an approved resource exception.
+The shared-path feasibility must therefore be resolved before finalizing this allocation.
 
 The baseline circuit will target a \(1.8\,\mathrm{V}\) core supply, with input and output protection compatible with the harness pad interface.
 External RF and LO signal generators will be used for characterization.
